@@ -50,7 +50,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	response, err := json.Marshal(`{"status":"ok"}`)
+	response, _ := json.Marshal(`{"status":"ok"}`)
 	w.Write(response)
 }
 
