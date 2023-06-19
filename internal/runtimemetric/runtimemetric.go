@@ -16,8 +16,7 @@ import (
 
 func Run(client *http.Client, serveraddr string, reportInterval, pollInterval int) {
 	//time.Sleep(time.Second * time.Duration(reportInterval-pollInterval))
-	var metricmap map[string]string
-	metricmap = metric.GetMapMetrics()
+	metricmap := metric.GetMapMetrics()
 
 	for {
 		m := handlerclient.GetMetrics()
