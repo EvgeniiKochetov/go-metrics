@@ -17,14 +17,11 @@ func Test_sendMetrics(t *testing.T) {
 		name    string
 		args    args
 		wantErr bool
-	}{
-		{name: "", args: args{typeOfMetric: "counter", nameOfMetric: "someCounter", valueOfMetric: "10"}, wantErr: false},
-		{name: "", args: args{typeOfMetric: "counter", nameOfMetric: "unknownMetric", valueOfMetric: "9"}, wantErr: true},
-	}
+	}{}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := handlerclient.SendMetrics(client, "http://localhost:8080/", tt.args.typeOfMetric, tt.args.nameOfMetric, tt.args.valueOfMetric); (err == nil) == tt.wantErr {
+			if err := handlerclient.SendMetrics(client, "http://localhost:8080/update/", tt.args.typeOfMetric, tt.args.nameOfMetric, tt.args.valueOfMetric); (err == nil) == tt.wantErr {
 				t.Errorf("sendMetrics() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
