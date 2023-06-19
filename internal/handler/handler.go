@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-
 	"net/http"
 
 	"strings"
@@ -16,8 +15,8 @@ import (
 
 var memory storage.MemStorage
 
-func Init() {
-	memory = storage.MemStorage{}
+func init() {
+	memory = storage.NewMemStorage()
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
