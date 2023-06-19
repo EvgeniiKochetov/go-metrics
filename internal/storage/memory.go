@@ -35,18 +35,16 @@ func NewMemStorage() MemStorage {
 }
 func (m *MemStorage) GetMetricGauge(name string) (string, bool) {
 	k, ok := m.metricsgauge[name]
-	if ok {
-		return strconv.FormatFloat(float64(k), 'f', -1, 64), true
-	}
-	return "", ok
+
+	return strconv.FormatFloat(float64(k), 'f', -1, 64), ok
+
 }
 
 func (m *MemStorage) GetMetricCounter(name string) (string, bool) {
 	k, ok := m.metricscounter[name]
-	if ok {
-		return strconv.FormatInt(int64(k), 10), true
-	}
-	return "", ok
+
+	return strconv.FormatInt(int64(k), 10), ok
+
 }
 
 func (m *MemStorage) GetAllMetrics() ([]string, bool) {

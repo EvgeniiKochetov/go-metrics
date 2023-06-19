@@ -16,7 +16,7 @@ import (
 )
 
 func Run(client *http.Client, serveraddr string, reportInterval, pollInterval int) {
-	//time.Sleep(time.Second * time.Duration(reportInterval))
+
 	metricmap := metric.GetMapMetrics()
 	storageMetric := storage.NewMemStorage()
 	var value string
@@ -31,9 +31,9 @@ func Run(client *http.Client, serveraddr string, reportInterval, pollInterval in
 			field := val.Field(i)
 			nameMetric := typeOfT.Field(i).Name
 			if nameMetric == "counter" {
-				storageMetric.ChangeGauge(nameMetric, fmt.Sprint(field.Interface()))
-			} else {
 				storageMetric.ChangeCounter(nameMetric, fmt.Sprint(field.Interface()))
+			} else {
+				storageMetric.ChangeGauge(nameMetric, fmt.Sprint(field.Interface()))
 			}
 		}
 
