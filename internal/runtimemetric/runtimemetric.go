@@ -2,6 +2,7 @@ package runtimemetric
 
 import (
 	"fmt"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
 
 	"net/http"
 
@@ -15,8 +16,11 @@ import (
 )
 
 func Run(client *http.Client, serveraddr string, reportInterval, pollInterval int) {
-	//time.Sleep(time.Second * time.Duration(reportInterval-pollInterval))
+	//time.Sleep(time.Second * time.Duration(reportInterval))
 	metricmap := metric.GetMapMetrics()
+	storageMetric := storage.NewMemStorage()
+	var value string
+	var ok bool
 
 	for {
 		m := handlerclient.GetMetrics()
@@ -25,13 +29,27 @@ func Run(client *http.Client, serveraddr string, reportInterval, pollInterval in
 
 		for i := 0; i < val.NumField(); i++ {
 			field := val.Field(i)
-			typeOfMetric, ok := metricmap[typeOfT.Field(i).Name]
-			if ok {
+			nameMetric := typeOfT.Field(i).Name
+			if nameMetric == "counter" {
+				storageMetric.ChangeGauge(nameMetric, fmt.Sprint(field.Interface()))
+			} else {
+				storageMetric.ChangeCounter(nameMetric, fmt.Sprint(field.Interface()))
+			}
+		}
 
-				handlerclient.SendMetrics(client, serveraddr, typeOfMetric, typeOfT.Field(i).Name, fmt.Sprint(field.Interface()))
+		for k, typeOfMetric := range metricmap {
+			if typeOfMetric == "counter" {
+				value, ok = storageMetric.GetMetricCounter(k)
+			} else {
+				value, ok = storageMetric.GetMetricGauge(k)
 			}
 
+			if ok {
+				handlerclient.SendMetrics(client, serveraddr, typeOfMetric, k, value)
+			}
+			time.Sleep(time.Second * time.Duration(reportInterval))
 		}
+
 		time.Sleep(time.Second * time.Duration(pollInterval))
 	}
 
