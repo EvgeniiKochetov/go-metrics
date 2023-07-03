@@ -197,7 +197,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 				req.Value = &resFloat
 			}
 		} else {
-			w.WriteHeader(http.StatusUnprocessableEntity)
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 	case "counter":
@@ -213,7 +213,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else {
-			w.WriteHeader(http.StatusUnprocessableEntity)
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 	default:
