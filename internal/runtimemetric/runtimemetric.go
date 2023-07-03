@@ -2,7 +2,8 @@ package runtimemetric
 
 import (
 	"fmt"
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
+	"math/rand"
+	"strconv"
 
 	"net/http"
 
@@ -13,6 +14,8 @@ import (
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/hadlerclient"
 
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/metric"
+
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
 )
 
 func Run(client *http.Client, serveraddr string, reportInterval, pollInterval int) {
@@ -21,6 +24,7 @@ func Run(client *http.Client, serveraddr string, reportInterval, pollInterval in
 	storageMetric := storage.NewMemStorage()
 	var value string
 	var ok bool
+	var counter int
 
 	for {
 		m := handlerclient.GetMetrics()
@@ -46,6 +50,10 @@ func Run(client *http.Client, serveraddr string, reportInterval, pollInterval in
 
 			if ok {
 				handlerclient.SendMetrics(client, serveraddr, typeOfMetric, k, value)
+				counter++
+
+				handlerclient.SendMetrics(client, serveraddr, "counter", "PollCount", string(counter))
+				handlerclient.SendMetrics(client, serveraddr, "gauge", "RandomValue", strconv.FormatFloat(rand.Float64(), 'f', -1, 64))
 			}
 			time.Sleep(time.Second * time.Duration(reportInterval))
 		}
