@@ -188,7 +188,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 
 		res, ok := memory.GetMetricGauge(req.ID)
 		if ok {
-			resFloat, err := strconv.ParseFloat(res, 10)
+			resFloat, err := strconv.ParseFloat(res, 32)
 			if err != nil {
 				req.Value = &resFloat
 			}
@@ -200,7 +200,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 
 		res, ok := memory.GetMetricCounter(req.ID)
 		if ok {
-			resInt, err := strconv.ParseInt(res, 10, 10)
+			resInt, err := strconv.ParseInt(res, 10, 32)
 			if err != nil {
 				req.Delta = &resInt
 			}
