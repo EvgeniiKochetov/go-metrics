@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"go.uber.org/zap"
@@ -117,11 +118,19 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
-
+	var value string
 	switch req.MType {
 	case "gauge":
-		//fmt.Println(req.ID, strconv.FormatFloat(*req.Value, 'f', -1, 64))
-		err := memory.ChangeGauge(req.ID, strconv.FormatFloat(*req.Value, 'f', -1, 64))
+
+		fmt.Println(*req.Value)
+
+		if float64(*req.Value) == float64(int(*req.Value)) {
+			value = strconv.FormatFloat(float64(*req.Value), 'f', 1, 64)
+		} else {
+			value = strconv.FormatFloat(*req.Value, 'f', 5, 64)
+		}
+		fmt.Println(value)
+		err := memory.ChangeGauge(req.ID, value)
 		if err != nil {
 			logger.Log.Info("cannot change gauge", zap.Error(err))
 			w.WriteHeader(http.StatusInternalServerError)
@@ -161,7 +170,7 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
-	//fmt.Println("ValueUseJSON")
+
 	if r.Method != http.MethodPost {
 		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -189,7 +198,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 
 		if ok {
 			resFloat, err := strconv.ParseFloat(res, 64)
-			//fmt.Println(err)
+
 			if err != nil {
 				w.WriteHeader(http.StatusNotFound)
 
@@ -203,7 +212,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	case "counter":
 
 		res, ok := memory.GetMetricCounter(req.ID)
-		//fmt.Println(ok)
+
 		if ok {
 			resInt, err := strconv.ParseInt(res, 10, 32)
 			if err != nil {
