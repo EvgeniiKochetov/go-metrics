@@ -188,7 +188,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 		res, ok := memory.GetMetricGauge(req.ID)
 
 		if ok {
-			resFloat, err := strconv.ParseFloat(res, 32)
+			resFloat, err := strconv.ParseFloat(res, 64)
 			//fmt.Println(err)
 			if err != nil {
 				w.WriteHeader(http.StatusNotFound)
