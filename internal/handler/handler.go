@@ -121,7 +121,7 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 
 	switch req.MType {
 	case "gauge":
-
+		fmt.Println(req.ID, strconv.FormatFloat(*req.Value, 'f', -1, 64))
 		err := memory.ChangeGauge(req.ID, strconv.FormatFloat(*req.Value, 'f', -1, 64))
 		if err != nil {
 			logger.Log.Info("cannot change gauge", zap.Error(err))
@@ -162,7 +162,7 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Method)
+	fmt.Println("ValueUseJSON")
 	if r.Method != http.MethodPost {
 		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -187,9 +187,14 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	case "gauge":
 
 		res, ok := memory.GetMetricGauge(req.ID)
+
 		if ok {
 			resFloat, err := strconv.ParseFloat(res, 32)
+			fmt.Println(err)
 			if err != nil {
+				w.WriteHeader(http.StatusNotFound)
+
+			} else {
 				req.Value = &resFloat
 			}
 		} else {
@@ -199,9 +204,12 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	case "counter":
 
 		res, ok := memory.GetMetricCounter(req.ID)
+		fmt.Println(ok)
 		if ok {
 			resInt, err := strconv.ParseInt(res, 10, 32)
 			if err != nil {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
 				req.Delta = &resInt
 			}
 
@@ -218,7 +226,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-
+	fmt.Println(req)
 	enc := json.NewEncoder(w)
 	if err := enc.Encode(req); err != nil {
 		logger.Log.Info("error encoding response", zap.Error(err))
