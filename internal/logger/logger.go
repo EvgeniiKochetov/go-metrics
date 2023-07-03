@@ -26,7 +26,7 @@ func Initialize(level string) error {
 func RequestLogger(h http.Handler) http.Handler {
 
 	logFn := func(w http.ResponseWriter, r *http.Request) {
-		Log.Info("get request", zap.String("method", r.Method))
+		//Log.Info("get request", zap.String("method", r.Method))
 		h.ServeHTTP(w, r)
 		Log.Debug("got incoming HTTP request",
 			zap.String("method", r.Method),
