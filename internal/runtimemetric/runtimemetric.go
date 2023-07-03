@@ -52,7 +52,7 @@ func Run(client *http.Client, serveraddr string, reportInterval, pollInterval in
 				handlerclient.SendMetrics(client, serveraddr, typeOfMetric, k, value)
 				counter++
 
-				handlerclient.SendMetrics(client, serveraddr, "counter", "PollCount", string(counter))
+				handlerclient.SendMetrics(client, serveraddr, "counter", "PollCount", strconv.FormatInt(int64(counter), 10))
 				handlerclient.SendMetrics(client, serveraddr, "gauge", "RandomValue", strconv.FormatFloat(rand.Float64(), 'f', -1, 64))
 			}
 			time.Sleep(time.Second * time.Duration(reportInterval))
