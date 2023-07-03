@@ -56,7 +56,8 @@ func run() error {
 		r.Post("/update/{typeMetric}/{metric}/{value}", handler.Update)
 		r.Get("/value/counter/{metric}", handler.MetricCounter)
 		r.Get("/value/gauge/{metric}", handler.MetricGauge)
-
+		r.Post("/update", handler.UpdateUseJSON)
+		r.Post("/value", handler.ValueUseJSON)
 	})
 	return http.ListenAndServe(flagRunAddr, r)
 

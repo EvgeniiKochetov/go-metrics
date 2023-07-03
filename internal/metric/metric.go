@@ -1,6 +1,8 @@
 package metric
 
-import "github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
+import (
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
+)
 
 var StorageMetric storage.MemStorage
 
