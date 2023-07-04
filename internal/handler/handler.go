@@ -215,7 +215,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 		res, ok := memory.GetMetricCounter(req.ID)
 
 		if ok {
-			resInt, err := strconv.ParseInt(res, 10, 32)
+			resInt, err := strconv.ParseInt(res, 10, 64)
 			if err != nil {
 				fmt.Println("Ошибка конвертации counter", req.ID, resInt)
 				w.WriteHeader(http.StatusNotFound)
