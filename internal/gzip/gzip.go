@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"io"
 	"net/http"
+	"strings"
 )
 
 type compressWriter struct {
@@ -69,27 +70,27 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 	gzipFn := func(w http.ResponseWriter, r *http.Request) {
 		ow := w
 		h.ServeHTTP(ow, r)
-		//accept := r.Header.Get("Accept")
-		//
-		//acceptEncoding := strings.Contains(accept, "application/json") || strings.Contains(accept, "text/html")
-		//if acceptEncoding {
-		//	cw := newCompressWriter(w)
-		//	ow = cw
-		//	ow.Header().Set("Accept-Encoding", "gzip")
-		//	defer cw.Close()
-		//}
+		accept := r.Header.Get("Accept")
 
-		//contentEncoding := r.Header.Get("Content-Encoding")
-		//sendsGzip := strings.Contains(contentEncoding, "gzip")
-		//if sendsGzip {
-		//	cr, err := newCompressReader(r.Body)
-		//	if err != nil {
-		//		w.WriteHeader(http.StatusInternalServerError)
-		//		return
-		//	}
-		//	r.Body = cr
-		//	defer cr.Close()
-		//}
+		acceptEncoding := strings.Contains(accept, "application/json") || strings.Contains(accept, "text/html")
+		if acceptEncoding {
+			cw := newCompressWriter(w)
+			ow = cw
+			ow.Header().Set("Accept-Encoding", "gzip")
+			defer cw.Close()
+		}
+
+		contentEncoding := r.Header.Get("Content-Encoding")
+		sendsGzip := strings.Contains(contentEncoding, "gzip")
+		if sendsGzip {
+			cr, err := newCompressReader(r.Body)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			r.Body = cr
+			defer cr.Close()
+		}
 
 	}
 
