@@ -2,6 +2,7 @@ package gzip
 
 import (
 	"compress/gzip"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 	"io"
 	"net/http"
 	"strings"
@@ -69,10 +70,17 @@ func (c *compressReader) Close() error {
 func MyGzipMiddleware(h http.Handler) http.Handler {
 	gzipFn := func(w http.ResponseWriter, r *http.Request) {
 		ow := w
+		sugar := logger.Log.Sugar()
 
 		acceptEncoding := r.Header.Get("Accept-Encoding")
 		supportsGzip := strings.Contains(acceptEncoding, "gzip")
 		if supportsGzip {
+			sugar.Infoln(
+				"uri", r.RequestURI,
+				"method", r.Method,
+				"supportsGzip", supportsGzip,
+				"acceptEncoding", acceptEncoding,
+			)
 			cw := newCompressWriter(w)
 			ow = cw
 			defer cw.Close()
@@ -81,6 +89,14 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 		contentEncoding := r.Header.Get("Content-Encoding")
 		sendsGzip := strings.Contains(contentEncoding, "gzip")
 		if sendsGzip {
+
+			sugar.Infoln(
+				"uri", r.RequestURI,
+				"method", r.Method,
+				"contentEncoding", contentEncoding,
+				"sendsGzip", sendsGzip,
+			)
+
 			cr, err := newCompressReader(r.Body)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
