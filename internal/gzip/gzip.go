@@ -70,7 +70,7 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 	gzipFn := func(w http.ResponseWriter, r *http.Request) {
 		ow := w
 		// проверяем, что клиент отправил серверу сжатые данные в формате gzip
-		contentEncoding := r.Header.Get("Content-Encoding")
+		contentEncoding := r.Header.Get("Content-Type")
 		sendsGzip := strings.Contains(contentEncoding, "gzip")
 		if sendsGzip {
 			// оборачиваем тело запроса в io.Reader с поддержкой декомпрессии
