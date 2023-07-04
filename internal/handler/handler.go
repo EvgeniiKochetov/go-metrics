@@ -200,7 +200,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 			resFloat, err := strconv.ParseFloat(res, 64)
 
 			if err != nil {
-				w.WriteHeader(http.StatusNotFound)
+				w.WriteHeader(http.StatusInternalServerError)
 
 			} else {
 				req.Value = &resFloat

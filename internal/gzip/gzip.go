@@ -81,7 +81,7 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 			defer cw.Close()
 		}
 
-		contentEncoding := r.Header.Get("Content-Encoding")
+		contentEncoding := r.Header.Get("Content-Type")
 		sugar.Infoln("MyGzip", "Request Content-Encoding:", contentEncoding)
 		sendsGzip := strings.Contains(contentEncoding, "gzip")
 		if sendsGzip {
