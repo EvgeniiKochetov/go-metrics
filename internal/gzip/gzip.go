@@ -69,18 +69,18 @@ func (c *compressReader) Close() error {
 func MyGzipMiddleware(h http.Handler) http.Handler {
 	gzipFn := func(w http.ResponseWriter, r *http.Request) {
 		ow := w
-		//
-		//accept := r.Header.Get("Accept")
-		//sugar.Infoln("MyGzip", "Request accept:", accept)
-		//supportsGzip := strings.Contains(accept, "gzip")
-		//if supportsGzip {
-		//	cw := newCompressWriter(w)
-		//	ow = cw
-		//	defer cw.Close()
-		//}
-		//
+
+		accept := r.Header.Get("Accept-Encoding")
+
+		acceptEncoding := strings.Contains(accept, "application/json") || strings.Contains(accept, "text/html")
+		if acceptEncoding {
+			cw := newCompressWriter(w)
+			ow = cw
+			ow.Header().Set("Accept-Encoding", "gzip")
+			defer cw.Close()
+		}
+
 		contentEncoding := r.Header.Get("Content-Encoding")
-		//sugar.Infoln("MyGzip", "Request acceptEncoding:", acceptEncoding)
 		sendsGzip := strings.Contains(contentEncoding, "gzip")
 		if sendsGzip {
 			cr, err := newCompressReader(r.Body)
