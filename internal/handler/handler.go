@@ -234,7 +234,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	//fmt.Println(req)
+
 	enc := json.NewEncoder(w)
 	if err := enc.Encode(req); err != nil {
 		logger.Log.Info("error encoding response", zap.Error(err))
