@@ -13,6 +13,8 @@ import (
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/handler"
+
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
 )
 
 var (
@@ -47,7 +49,7 @@ func run() error {
 	}
 
 	logger.Log.Info("Running server", zap.String("address", flagRunAddr))
-
+	r.Use(gzip.MyGzipMiddleware)
 	r.Use(logger.RequestLogger)
 
 	r.Route("/", func(r chi.Router) {
