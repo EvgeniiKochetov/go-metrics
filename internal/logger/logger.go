@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"encoding/json"
 	"go.uber.org/zap"
 	"net/http"
 	"time"
@@ -58,6 +59,7 @@ func WithLogging(h http.Handler) http.Handler {
 			"status", responseData.status,
 			"duration", duration,
 			"size", responseData.size,
+			"json", json.NewDecoder(r.Body),
 		)
 	}
 	return http.HandlerFunc(logFn)
