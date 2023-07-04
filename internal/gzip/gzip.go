@@ -78,6 +78,7 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 			cw := newCompressWriter(w)
 			// меняем оригинальный http.ResponseWriter на новый
 			ow = cw
+			ow.WriteHeader(http.StatusOK)
 			// не забываем отправить клиенту все сжатые данные после завершения middleware
 			defer cw.Close()
 		}
