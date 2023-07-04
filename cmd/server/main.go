@@ -49,7 +49,7 @@ func run() error {
 
 	logger.Log.Info("Running server", zap.String("address", flagRunAddr))
 
-	r.Use(gzip.MyGzipMiddleware, logger.RequestLogger)
+	r.Use(logger.RequestLogger, gzip.MyGzipMiddleware)
 
 	r.Route("/", func(r chi.Router) {
 

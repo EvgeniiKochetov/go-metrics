@@ -26,7 +26,8 @@ func Initialize(level string) error {
 func RequestLogger(h http.Handler) http.Handler {
 
 	logFn := func(w http.ResponseWriter, r *http.Request) {
-		//Log.Info("get request", zap.String("method", r.Method))
+		sugar := Log.Sugar()
+		sugar.Infoln("RequestLogger")
 		h.ServeHTTP(w, r)
 		Log.Debug("got incoming HTTP request",
 			zap.String("method", r.Method),
@@ -53,6 +54,7 @@ func WithLogging(h http.Handler) http.Handler {
 
 		duration := time.Since(start)
 		sugar := Log.Sugar()
+		sugar.Infoln("WithLogging")
 		sugar.Infoln(
 			"uri", r.RequestURI,
 			"method", r.Method,
