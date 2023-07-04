@@ -71,8 +71,9 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 	gzipFn := func(w http.ResponseWriter, r *http.Request) {
 		ow := w
 		sugar := logger.Log.Sugar()
-		sugar.Infoln("MyGzip")
+
 		acceptEncoding := r.Header.Get("Accept-Encoding")
+		sugar.Infoln("MyGzip", "Request accept-encoding:", acceptEncoding)
 		supportsGzip := strings.Contains(acceptEncoding, "gzip")
 		if supportsGzip {
 			cw := newCompressWriter(w)
@@ -81,6 +82,7 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 		}
 
 		contentEncoding := r.Header.Get("Content-Encoding")
+		sugar.Infoln("MyGzip", "Request Content-Encoding:", contentEncoding)
 		sendsGzip := strings.Contains(contentEncoding, "gzip")
 		if sendsGzip {
 
