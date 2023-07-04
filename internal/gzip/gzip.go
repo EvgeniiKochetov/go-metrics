@@ -2,7 +2,6 @@ package gzip
 
 import (
 	"compress/gzip"
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 	"io"
 	"net/http"
 	"strings"
@@ -70,22 +69,20 @@ func (c *compressReader) Close() error {
 func MyGzipMiddleware(h http.Handler) http.Handler {
 	gzipFn := func(w http.ResponseWriter, r *http.Request) {
 		ow := w
-		sugar := logger.Log.Sugar()
-
-		accept := r.Header.Get("Accept")
-		sugar.Infoln("MyGzip", "Request accept:", accept)
-		supportsGzip := strings.Contains(accept, "gzip")
-		if supportsGzip {
-			cw := newCompressWriter(w)
-			ow = cw
-			defer cw.Close()
-		}
-
-		acceptEncoding := r.Header.Get("Accept-Encoding")
-		sugar.Infoln("MyGzip", "Request acceptEncoding:", acceptEncoding)
-		sendsGzip := strings.Contains(acceptEncoding, "gzip")
+		//
+		//accept := r.Header.Get("Accept")
+		//sugar.Infoln("MyGzip", "Request accept:", accept)
+		//supportsGzip := strings.Contains(accept, "gzip")
+		//if supportsGzip {
+		//	cw := newCompressWriter(w)
+		//	ow = cw
+		//	defer cw.Close()
+		//}
+		//
+		contentEncoding := r.Header.Get("Content-Encoding")
+		//sugar.Infoln("MyGzip", "Request acceptEncoding:", acceptEncoding)
+		sendsGzip := strings.Contains(contentEncoding, "gzip")
 		if sendsGzip {
-
 			cr, err := newCompressReader(r.Body)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
