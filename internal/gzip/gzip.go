@@ -72,7 +72,7 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 		ow := w
 		sugar := logger.Log.Sugar()
 
-		acceptEncoding := r.Header.Get("Accept-Encoding")
+		acceptEncoding := r.Header.Get("Accept")
 		sugar.Infoln("MyGzip", "Request accept-encoding:", acceptEncoding)
 		supportsGzip := strings.Contains(acceptEncoding, "gzip")
 		if supportsGzip {
