@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
 	"go.uber.org/zap"
 
 	"net/http"
@@ -47,8 +48,9 @@ func run() error {
 	}
 
 	logger.Log.Info("Running server", zap.String("address", flagRunAddr))
-	//r.Use(gzip.MyGzipMiddleware)
+
 	r.Use(logger.RequestLogger)
+	r.Use(gzip.MyGzipMiddleware)
 
 	r.Route("/", func(r chi.Router) {
 
