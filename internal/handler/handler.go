@@ -217,12 +217,14 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 		if ok {
 			resInt, err := strconv.ParseInt(res, 10, 32)
 			if err != nil {
+				fmt.Println("Ошибка конвертации counter", req.ID, resInt)
 				w.WriteHeader(http.StatusNotFound)
 			} else {
 				req.Delta = &resInt
 			}
 
 		} else {
+			fmt.Println("Ошибка поиска  counter", req.ID)
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
