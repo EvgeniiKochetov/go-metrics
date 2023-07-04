@@ -200,6 +200,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 			resFloat, err := strconv.ParseFloat(res, 64)
 
 			if err != nil {
+				logger.Log.Info("unsupported request type")
 				w.WriteHeader(http.StatusNotFound)
 
 			} else {
