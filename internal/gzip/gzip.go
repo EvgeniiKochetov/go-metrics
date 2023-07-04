@@ -70,15 +70,15 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 	gzipFn := func(w http.ResponseWriter, r *http.Request) {
 		ow := w
 
-		accept := r.Header.Get("Accept-Encoding")
-
-		acceptEncoding := strings.Contains(accept, "application/json") || strings.Contains(accept, "text/html")
-		if acceptEncoding {
-			cw := newCompressWriter(w)
-			ow = cw
-			ow.Header().Set("Accept-Encoding", "gzip")
-			defer cw.Close()
-		}
+		//accept := r.Header.Get("Accept")
+		//
+		//acceptEncoding := strings.Contains(accept, "application/json") || strings.Contains(accept, "text/html")
+		//if acceptEncoding {
+		//	cw := newCompressWriter(w)
+		//	ow = cw
+		//	ow.Header().Set("Accept-Encoding", "gzip")
+		//	defer cw.Close()
+		//}
 
 		contentEncoding := r.Header.Get("Content-Encoding")
 		sendsGzip := strings.Contains(contentEncoding, "gzip")
