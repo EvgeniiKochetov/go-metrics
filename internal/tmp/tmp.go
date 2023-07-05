@@ -29,10 +29,8 @@ func SaveInFile(filename string, interval string) {
 	defer f.Close()
 
 	for {
-		fmt.Println("saving file")
 		err = handler.Memory.SaveStorage(f.Name())
 		if err != nil {
-			fmt.Println("error save metrics")
 			logger.Log.Error("error save metrics")
 			return
 		}
