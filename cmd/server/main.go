@@ -51,7 +51,7 @@ func run() error {
 	r.Use(logger.RequestLogger, gzip.MyGzipHandle)
 	//r.Use(logger.RequestLogger, gzip.MyGzipMiddleware)
 	//r.Use(logger.RequestLogger)
-
+	//
 	r.Route("/", func(r chi.Router) {
 
 		r.Get("/", handler.AllMetrics)
