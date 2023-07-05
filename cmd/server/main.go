@@ -2,12 +2,14 @@ package main
 
 import (
 	"flag"
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
-	"go.uber.org/zap"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/tmp"
+	"os"
 
 	"net/http"
 
-	"os"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
+
+	"go.uber.org/zap"
 
 	"github.com/go-chi/chi/v5"
 
@@ -17,14 +19,28 @@ import (
 )
 
 var (
-	flagRunAddr  string
-	flagLogLevel string
+	flagRunAddr         string
+	flagLogLevel        string
+	flagStoreInterval   string
+	flagFileStoragePath string
+	flagRestore         string
 )
 
 func main() {
 
+	parseFlags()
+
+	if err := run(); err != nil {
+		panic(err)
+	}
+}
+
+func parseFlags() {
 	flag.StringVar(&flagRunAddr, "a", ":8080", "address and port to run server")
 	flag.StringVar(&flagLogLevel, "l", "info", "log level")
+	flag.StringVar(&flagStoreInterval, "i", "10s", "store interval")
+	flag.StringVar(&flagFileStoragePath, "f", "tmp/metrics-db.json", "storage path")
+	flag.StringVar(&flagRestore, "r", "true", "restore")
 
 	flag.Parse()
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
@@ -33,8 +49,14 @@ func main() {
 	if envLogLevel := os.Getenv("LOG_LEVEL"); envLogLevel != "" {
 		flagLogLevel = envLogLevel
 	}
-	if err := run(); err != nil {
-		panic(err)
+	if envStoreInterval := os.Getenv("STORE_INTERVAL"); envStoreInterval != "" {
+		flagStoreInterval = envStoreInterval
+	}
+	if envStorePath := os.Getenv("FILE_STORAGE_PATH"); envStorePath != "" {
+		flagFileStoragePath = envStorePath
+	}
+	if envRestore := os.Getenv("RESTORE"); envRestore != "" {
+		flagRestore = envRestore
 	}
 
 }
@@ -49,9 +71,7 @@ func run() error {
 
 	logger.Log.Info("Running server", zap.String("address", flagRunAddr))
 	r.Use(logger.RequestLogger, gzip.MyGzipHandle)
-	//r.Use(logger.RequestLogger, gzip.MyGzipMiddleware)
-	//r.Use(logger.RequestLogger)
-	//
+
 	r.Route("/", func(r chi.Router) {
 
 		r.Get("/", handler.AllMetrics)
@@ -61,6 +81,9 @@ func run() error {
 		r.Post("/update/", handler.UpdateUseJSON)
 		r.Post("/value/", handler.ValueUseJSON)
 	})
+
+	go tmp.SaveInFile(flagFileStoragePath, flagStoreInterval)
+
 	return http.ListenAndServe(flagRunAddr, r)
 
 }

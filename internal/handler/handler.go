@@ -22,10 +22,10 @@ import (
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/models"
 )
 
-var memory storage.MemStorage
+var Memory storage.MemStorage
 
 func init() {
-	memory = storage.NewMemStorage()
+	Memory = storage.NewMemStorage()
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
@@ -43,9 +43,9 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 	switch typeOfMetric {
 	case "gauge":
-		err = memory.ChangeGauge(nameOfMetric, valueOfMetric)
+		err = Memory.ChangeGauge(nameOfMetric, valueOfMetric)
 	case "counter":
-		err = memory.ChangeCounter(nameOfMetric, valueOfMetric)
+		err = Memory.ChangeCounter(nameOfMetric, valueOfMetric)
 	default:
 		{
 			http.Error(w, "Mistake in request! Wrong type metric", http.StatusBadRequest)
@@ -76,7 +76,7 @@ func AllMetrics(w http.ResponseWriter, _ *http.Request) {
 
 func MetricGauge(w http.ResponseWriter, r *http.Request) {
 	metric := chi.URLParam(r, "metric")
-	res, ok := memory.GetMetricGauge(metric)
+	res, ok := Memory.GetMetricGauge(metric)
 	if ok {
 		w.Write([]byte(res))
 		return
@@ -88,7 +88,7 @@ func MetricGauge(w http.ResponseWriter, r *http.Request) {
 
 func MetricCounter(w http.ResponseWriter, r *http.Request) {
 	metric := chi.URLParam(r, "metric")
-	res, ok := memory.GetMetricCounter(metric)
+	res, ok := Memory.GetMetricCounter(metric)
 	if ok {
 		w.Write([]byte(res))
 		w.WriteHeader(http.StatusOK)
@@ -130,7 +130,7 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 			value = strconv.FormatFloat(*req.Value, 'f', 24, 64)
 		}
 		fmt.Println(value)
-		err := memory.ChangeGauge(req.ID, value)
+		err := Memory.ChangeGauge(req.ID, value)
 		if err != nil {
 			logger.Log.Info("cannot change gauge", zap.Error(err))
 			w.WriteHeader(http.StatusInternalServerError)
@@ -138,7 +138,7 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 		}
 	case "counter":
 
-		err := memory.ChangeCounter(req.ID, strconv.FormatInt(*req.Delta, 10))
+		err := Memory.ChangeCounter(req.ID, strconv.FormatInt(*req.Delta, 10))
 		if err != nil {
 			logger.Log.Info("cannot change gauge", zap.Error(err))
 			w.WriteHeader(http.StatusInternalServerError)
@@ -194,7 +194,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	switch req.MType {
 	case "gauge":
 
-		res, ok := memory.GetMetricGauge(req.ID)
+		res, ok := Memory.GetMetricGauge(req.ID)
 
 		if ok {
 			resFloat, err := strconv.ParseFloat(res, 64)
@@ -212,7 +212,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 		}
 	case "counter":
 
-		res, ok := memory.GetMetricCounter(req.ID)
+		res, ok := Memory.GetMetricCounter(req.ID)
 
 		if ok {
 			resInt, err := strconv.ParseInt(res, 10, 64)

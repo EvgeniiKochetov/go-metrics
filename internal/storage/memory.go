@@ -1,6 +1,9 @@
 package storage
 
 import (
+	"encoding/json"
+	"fmt"
+	"os"
 	"strconv"
 )
 
@@ -8,8 +11,8 @@ type gauge float64
 type counter int64
 
 type MemStorage struct {
-	metricsgauge   map[string]gauge
-	metricscounter map[string]counter
+	metricsgauge   map[string]gauge   `json:"metricsgauge"`
+	metricscounter map[string]counter `json:"metricscounter"`
 }
 
 func (m *MemStorage) ChangeGauge(name string, value string) error {
@@ -61,4 +64,15 @@ func (m *MemStorage) GetAllMetrics() ([]string, bool) {
 	}
 
 	return slice, true
+}
+
+func (m *MemStorage) SaveStorage(filename string) error {
+	slice, _ := m.GetAllMetrics()
+	data, err := json.Marshal(slice)
+	fmt.Println(string(data))
+	if err != nil {
+		return err
+	}
+	fmt.Println(data)
+	return os.WriteFile(filename, data, 0666)
 }
