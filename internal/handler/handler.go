@@ -127,7 +127,7 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 		if float64(*req.Value) == float64(int(*req.Value)) {
 			value = strconv.FormatFloat(float64(*req.Value), 'f', 1, 64)
 		} else {
-			value = strconv.FormatFloat(*req.Value, 'f', 10, 64)
+			value = strconv.FormatFloat(*req.Value, 'f', 24, 64)
 		}
 		fmt.Println(value)
 		err := memory.ChangeGauge(req.ID, value)
