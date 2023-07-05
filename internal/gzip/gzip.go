@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"io"
 	"net/http"
+	"strings"
 )
 
 type compressWriter struct {
@@ -86,17 +87,17 @@ func MyGzipMiddleware(h http.Handler) http.Handler {
 		//
 		h.ServeHTTP(ow, r)
 
-		//acceptEncoding := r.Header.Get("Accept-Encoding")
-		//supportsGzip := strings.Contains(acceptEncoding, "gzip")
-		//if supportsGzip {
-		//
-		//	cw := newCompressWriter(w)
-		//
-		//	ow = cw
-		//	ow.WriteHeader(http.StatusOK)
-		//
-		//	defer cw.Close()
-		//}
+		acceptEncoding := r.Header.Get("Accept-Encoding")
+		supportsGzip := strings.Contains(acceptEncoding, "gzip")
+		if supportsGzip {
+
+			cw := newCompressWriter(w)
+
+			ow = cw
+			ow.WriteHeader(http.StatusOK)
+
+			defer cw.Close()
+		}
 
 	}
 
