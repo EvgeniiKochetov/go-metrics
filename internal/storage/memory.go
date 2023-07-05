@@ -11,8 +11,8 @@ type gauge float64
 type counter int64
 
 type MemStorage struct {
-	metricsgauge   map[string]gauge   `json:"metricsgauge"`
-	metricscounter map[string]counter `json:"metricscounter"`
+	metricsgauge   map[string]gauge
+	metricscounter map[string]counter
 }
 
 func (m *MemStorage) ChangeGauge(name string, value string) error {
