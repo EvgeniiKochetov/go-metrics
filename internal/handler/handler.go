@@ -172,7 +172,7 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
-		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
+		logger.Log.Info("got request with bad method", zap.String("method", r.Method))
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
@@ -186,7 +186,7 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if (req.MType != "gauge") && (req.MType != "counter") {
-		logger.Log.Debug("unsupported request type", zap.String("type", req.MType))
+		logger.Log.Info("unsupported request type", zap.String("type", req.MType))
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
