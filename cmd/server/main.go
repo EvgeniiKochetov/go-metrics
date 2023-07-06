@@ -45,6 +45,7 @@ func parseFlags() {
 
 	flag.Parse()
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
+
 		flagRunAddr = envRunAddr
 	}
 	if envLogLevel := os.Getenv("LOG_LEVEL"); envLogLevel != "" {
@@ -59,7 +60,7 @@ func parseFlags() {
 	if envRestore := os.Getenv("RESTORE"); envRestore != "" {
 		flagRestore = envRestore
 	}
-
+	fmt.Println("Flags:", flagStoreInterval, flagFileStoragePath, flagRestore)
 }
 
 func run() error {
