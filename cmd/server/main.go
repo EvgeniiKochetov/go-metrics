@@ -82,7 +82,7 @@ func run() error {
 		r.Post("/update/", handler.UpdateUseJSON)
 		r.Post("/value/", handler.ValueUseJSON)
 	})
-	if flRestore, err := strconv.ParseBool(flagRestore); err != nil {
+	if flRestore, err := strconv.ParseBool(flagRestore); err == nil {
 		fmt.Println("RESTORE " + flagRestore)
 		if flRestore {
 			handler.Memory.LoadStorage(flagFileStoragePath)
