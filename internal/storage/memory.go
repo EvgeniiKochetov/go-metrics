@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/models"
 	"os"
 	"strconv"
@@ -99,6 +100,7 @@ func (m *MemStorage) SaveStorage(filename string) error {
 }
 
 func (m *MemStorage) LoadStorage(filename string) error {
+	fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!RESTORE " + filename)
 	data, err := os.ReadFile(filename)
 
 	if err != nil {

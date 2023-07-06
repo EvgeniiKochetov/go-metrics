@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/tmp"
 	"net/http"
 	"os"
@@ -82,6 +83,7 @@ func run() error {
 		r.Post("/value/", handler.ValueUseJSON)
 	})
 	if flRestore, err := strconv.ParseBool(flagRestore); err != nil {
+		fmt.Println("RESTORE " + flagRestore)
 		if flRestore {
 			handler.Memory.LoadStorage(flagFileStoragePath)
 		}
