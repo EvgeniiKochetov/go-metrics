@@ -28,7 +28,7 @@ func init() {
 
 func Update(w http.ResponseWriter, r *http.Request) {
 	var err error
-
+	//test
 	typeOfMetric := chi.URLParam(r, "typeMetric")
 	nameOfMetric := chi.URLParam(r, "metric")
 	valueOfMetric := chi.URLParam(r, "value")
