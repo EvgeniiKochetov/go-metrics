@@ -52,7 +52,7 @@ func parseFlags() {
 		flagLogLevel = envLogLevel
 	}
 	if envStoreInterval := os.Getenv("STORE_INTERVAL"); envStoreInterval != "" {
-		flagStoreInterval = envStoreInterval
+		flagStoreInterval = envStoreInterval + "s"
 	}
 	if envStorePath := os.Getenv("FILE_STORAGE_PATH"); envStorePath != "" {
 		flagFileStoragePath = envStorePath
