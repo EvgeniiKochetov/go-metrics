@@ -84,7 +84,7 @@ func (m *MemStorage) SaveStorage(filename string) error {
 		pointer := int64(v)
 		slice = append(slice, models.Metrics{
 			ID:    k,
-			MType: "gauge",
+			MType: "counter",
 			Delta: &pointer,
 			Value: nil,
 		})
@@ -112,6 +112,7 @@ func (m *MemStorage) LoadStorage(filename string) error {
 	json.Unmarshal(data, &slice)
 	fmt.Println(slice)
 	for _, v := range slice {
+
 		if v.MType == "gauge" {
 			m.ChangeGauge(v.ID, strconv.FormatFloat(*v.Value, 'f', -1, 64))
 		} else {

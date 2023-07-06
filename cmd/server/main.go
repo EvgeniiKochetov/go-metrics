@@ -75,7 +75,7 @@ func run() error {
 
 	logger.Log.Info("Running server", zap.String("address", flagRunAddr))
 	r.Use(logger.RequestLogger, gzip.MyGzipHandle)
-
+	r.NotFoundHandler()
 	r.Route("/", func(r chi.Router) {
 
 		r.Get("/", handler.AllMetrics)
