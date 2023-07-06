@@ -2,8 +2,8 @@ package tmp
 
 import (
 	"fmt"
-
 	"os"
+	"path/filepath"
 
 	"time"
 
@@ -19,8 +19,8 @@ func SaveInFile(filename string, interval string) {
 		logger.Log.Error("can't convert interval")
 		return
 	}
-
-	f, err := OpenFile(filename)
+	filepath, _ := filepath.Abs(filename)
+	f, err := OpenFile(filepath)
 	if err != nil {
 		fmt.Println("can't open file")
 		logger.Log.Error("can't open file")

@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/tmp"
-	"os"
-
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
 
@@ -81,7 +81,11 @@ func run() error {
 		r.Post("/update/", handler.UpdateUseJSON)
 		r.Post("/value/", handler.ValueUseJSON)
 	})
-
+	if flRestore, err := strconv.ParseBool(flagRestore); err != nil {
+		if flRestore {
+			handler.Memory.LoadStorage(flagFileStoragePath)
+		}
+	}
 	go tmp.SaveInFile(flagFileStoragePath, flagStoreInterval)
 
 	return http.ListenAndServe(flagRunAddr, r)

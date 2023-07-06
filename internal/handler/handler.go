@@ -13,8 +13,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/metric"
-
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
 
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
@@ -64,7 +62,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 func AllMetrics(w http.ResponseWriter, _ *http.Request) {
 
-	slice, ok := metric.StorageMetric.GetAllMetrics()
+	slice, ok := Memory.GetAllMetrics()
 	if !ok {
 		w.Write([]byte("No data"))
 	}
