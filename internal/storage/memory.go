@@ -104,6 +104,7 @@ func (m *MemStorage) LoadStorage(filename string) error {
 	data, err := os.ReadFile(filename)
 
 	if err != nil {
+		fmt.Println("Ошибка открытия файла")
 		return err
 	}
 
