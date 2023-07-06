@@ -40,7 +40,7 @@ func NewMemStorage() MemStorage {
 func (m *MemStorage) GetMetricGauge(name string) (string, bool) {
 	k, ok := m.metricsgauge[name]
 
-	return strconv.FormatFloat(float64(k), 'f', -1, 64), ok
+	return strconv.FormatFloat(float64(k), 'f', 11, 64), ok
 
 }
 
