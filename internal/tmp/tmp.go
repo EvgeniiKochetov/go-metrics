@@ -3,8 +3,6 @@ package tmp
 import (
 	"fmt"
 	"os"
-	"path/filepath"
-
 	"time"
 
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
@@ -16,11 +14,12 @@ func SaveInFile(filename string, interval string) {
 
 	freq, err := time.ParseDuration(interval)
 	if err != nil {
+		fmt.Println("SAVE IN FILE Error")
 		logger.Log.Error("can't convert interval")
 		return
 	}
-	filepath, _ := filepath.Abs(filename)
-	f, err := OpenFile(filepath)
+
+	f, err := OpenFile(filename)
 	if err != nil {
 		fmt.Println("can't open file")
 		logger.Log.Error("can't open file")
