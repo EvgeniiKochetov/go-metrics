@@ -109,7 +109,7 @@ func (m *MemStorage) LoadStorage(filename string) error {
 
 	slice := make([]models.Metrics, 0)
 	json.Unmarshal(data, &slice)
-
+	fmt.Println(slice)
 	for _, v := range slice {
 		if v.MType == "gauge" {
 			m.ChangeGauge(v.ID, strconv.FormatFloat(*v.Value, 'f', -1, 64))
