@@ -199,13 +199,13 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 
 			if err != nil {
 				logger.Log.Info("unsupported request type")
-				w.WriteHeader(http.StatusNotFound)
+				w.WriteHeader(http.StatusOK)
 
 			} else {
 				req.Value = &resFloat
 			}
 		} else {
-			w.WriteHeader(http.StatusNotFound)
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 	case "counter":
@@ -216,14 +216,14 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 			resInt, err := strconv.ParseInt(res, 10, 64)
 			if err != nil {
 				fmt.Println("Ошибка конвертации counter", req.ID, resInt)
-				w.WriteHeader(http.StatusNotFound)
+				w.WriteHeader(http.StatusOK)
 			} else {
 				req.Delta = &resInt
 			}
 
 		} else {
 			fmt.Println("Ошибка поиска  counter", req.ID)
-			w.WriteHeader(http.StatusNotFound)
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 	default:
