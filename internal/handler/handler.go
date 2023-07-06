@@ -107,7 +107,6 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 
 	var req models.Metrics
 	dec := json.NewDecoder(r.Body)
-	fmt.Println(req)
 	if err := dec.Decode(&req); err != nil {
 		logger.Log.Info("cannot decode request JSON body", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
