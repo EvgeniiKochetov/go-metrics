@@ -102,7 +102,7 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		returns
+		return
 	}
 
 	var req models.Metrics
