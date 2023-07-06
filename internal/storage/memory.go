@@ -117,7 +117,7 @@ func (m *MemStorage) LoadStorage(filename string) error {
 			m.ChangeGauge(v.ID, strconv.FormatFloat(*v.Value, 'f', -1, 64))
 		} else {
 			fmt.Println("counter ", v.ID, *v.Delta)
-			m.ChangeGauge(v.ID, strconv.FormatInt(*v.Delta, 10))
+			m.ChangeCounter(v.ID, strconv.FormatInt(*v.Delta, 10))
 		}
 	}
 	return nil
