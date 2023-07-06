@@ -85,7 +85,7 @@ func run() error {
 	if flRestore, err := strconv.ParseBool(flagRestore); err == nil {
 		fmt.Println("RESTORE " + flagRestore)
 		if flRestore {
-			handler.Memory.LoadStorage(flagFileStoragePath)
+			handler.Memory.LoadStorage("metrics-db.json")
 		}
 	}
 	go tmp.SaveInFile(flagFileStoragePath, flagStoreInterval)
