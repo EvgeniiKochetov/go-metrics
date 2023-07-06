@@ -97,14 +97,17 @@ func MetricCounter(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println()
 	if r.Method != http.MethodPost {
 		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
+		returns
 	}
 
 	var req models.Metrics
 	dec := json.NewDecoder(r.Body)
+	fmt.Println(req)
 	if err := dec.Decode(&req); err != nil {
 		logger.Log.Info("cannot decode request JSON body", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
