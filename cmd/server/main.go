@@ -42,7 +42,7 @@ func parseFlags() {
 	flag.StringVar(&flagLogLevel, "l", "info", "log level")
 	flag.StringVar(&flagStoreInterval, "i", "2s", "store interval")
 	flag.StringVar(&flagFileStoragePath, "f", "metrics-db.json", "storage path")
-	flag.StringVar(&flagRestore, "r", "true", "restore")
+	flag.StringVar(&flagRestore, "r", "false", "restore")
 
 	flag.Parse()
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
