@@ -116,6 +116,7 @@ func (m *MemStorage) LoadStorage(filename string) error {
 		if v.MType == "gauge" {
 			m.ChangeGauge(v.ID, strconv.FormatFloat(*v.Value, 'f', -1, 64))
 		} else {
+			fmt.Println("counter ", v.ID, *v.Delta)
 			m.ChangeGauge(v.ID, strconv.FormatInt(*v.Delta, 10))
 		}
 	}
