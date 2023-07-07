@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"go.uber.org/zap"
 
 	"net/http"
 
@@ -9,27 +10,45 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
+
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/handler"
+)
+
+var (
+	flagRunAddr  string
+	flagLogLevel string
 )
 
 func main() {
 
-	var flagRunAddr string
-	flag.StringVar(&flagRunAddr, "a", "localhost:8080", "address and port to run server")
+	flag.StringVar(&flagRunAddr, "a", ":8080", "address and port to run server")
+	flag.StringVar(&flagLogLevel, "l", "info", "log level")
+
 	flag.Parse()
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
 		flagRunAddr = envRunAddr
 	}
-
-	if err := run(flagRunAddr); err != nil {
+	if envLogLevel := os.Getenv("LOG_LEVEL"); envLogLevel != "" {
+		flagLogLevel = envLogLevel
+	}
+	if err := run(); err != nil {
 		panic(err)
 	}
 
 }
 
-func run(port string) error {
+func run() error {
 
 	r := chi.NewRouter()
+
+	if err := logger.Initialize(flagLogLevel); err != nil {
+		return err
+	}
+
+	logger.Log.Info("Running server", zap.String("address", flagRunAddr))
+
+	r.Use(logger.RequestLogger)
 
 	r.Route("/", func(r chi.Router) {
 
@@ -39,6 +58,6 @@ func run(port string) error {
 		r.Get("/value/gauge/{metric}", handler.MetricGauge)
 
 	})
-	return http.ListenAndServe(port, r)
+	return http.ListenAndServe(flagRunAddr, r)
 
 }
