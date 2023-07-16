@@ -105,6 +105,7 @@ func run() error {
 }
 
 func connectToDatabase() error {
+	fmt.Println(flagDatabase)
 	db, err := sql.Open("pgx", flagDatabase)
 	if err != nil {
 		fmt.Println(err)
