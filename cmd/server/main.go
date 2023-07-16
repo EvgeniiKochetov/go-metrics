@@ -31,7 +31,7 @@ func main() {
 
 	parseFlags()
 
-	go connectToDatabase()
+	//go connectToDatabase()
 
 	if err := run(); err != nil {
 		panic(err)
@@ -112,5 +112,6 @@ func connectToDatabase() error {
 	}
 	defer db.Close()
 	config.GetInstance().SetDB(db)
+
 	return err
 }
