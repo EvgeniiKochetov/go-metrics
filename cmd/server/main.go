@@ -14,6 +14,7 @@ import (
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/handler"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 	"github.com/go-chi/chi/v5"
+	_ "github.com/jackc/pgx"
 	"go.uber.org/zap"
 )
 
