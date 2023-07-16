@@ -67,6 +67,7 @@ func parseFlags() {
 	}
 
 	if envDatabase := os.Getenv("DATABASE_DSN"); envDatabase != "" {
+		fmt.Println(envDatabase)
 		flagDatabase = envDatabase
 	}
 }
