@@ -252,6 +252,7 @@ func Ping(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	if err := db.PingContext(ctx); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Println(err)
 		fmt.Println("Ping end: ", w.Header())
 		return
 	}
