@@ -36,6 +36,7 @@ func (c *configuration) SetDB(dbConnection string) {
 		return
 	}
 	c.db = db
+	database.DeleteTable(db)
 	database.CreateTable(db)
 }
 

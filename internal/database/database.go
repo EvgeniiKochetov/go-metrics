@@ -13,9 +13,19 @@ func tableExists(db *sql.DB) (bool, error) {
 	}
 	return true, nil
 }
+func DeleteTable(db *sql.DB) error {
+	deleteTable := "DROP TABLE Metrics"
 
+	_, err := db.Exec(deleteTable)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
+}
 func CreateTable(db *sql.DB) error {
-	createTable := "DELETE TABLE Metics; CREATE TABLE Metrics (type varchar(10), name varchar(50), value DOUBLE PRECISION, counter integer)"
+
+	createTable := "CREATE TABLE Metrics (type varchar(10), name varchar(50), value DOUBLE PRECISION, counter integer)"
 
 	_, err := db.Exec(createTable)
 	if err != nil {
