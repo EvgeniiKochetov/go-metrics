@@ -34,14 +34,12 @@ func main() {
 }
 
 func parseFlags() {
-	ps := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
-		`localhost`, `user`, `psw`, `user`)
 	flag.StringVar(&flagRunAddr, "a", ":8080", "address and port to run server")
 	flag.StringVar(&flagLogLevel, "l", "info", "log level")
 	flag.StringVar(&flagStoreInterval, "i", "2s", "store interval")
 	flag.StringVar(&flagFileStoragePath, "f", "metrics-db.json", "storage path")
 	flag.StringVar(&flagRestore, "r", "false", "restore")
-	flag.StringVar(&flagDatabase, "d", ps, "configuration of SQL server")
+	flag.StringVar(&flagDatabase, "d", "", "configuration of SQL server")
 
 	flag.Parse()
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
@@ -65,8 +63,9 @@ func parseFlags() {
 		fmt.Println(envDatabase)
 		flagDatabase = envDatabase
 	}
-
-	config.GetInstance().SetDB(flagDatabase)
+	if len(flagDatabase) > 0 {
+		config.GetInstance().SetDB(flagDatabase)
+	}
 }
 
 func run() error {
