@@ -1,7 +1,5 @@
 package metric
 
-//var StorageMetric storage.MemStorage
-
 func GetMapMetrics() map[string]string {
 	return map[string]string{
 		"Alloc":         "gauge",

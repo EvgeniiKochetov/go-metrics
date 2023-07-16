@@ -1,22 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/tmp"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/filestorage"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/handler"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
+	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"strconv"
-
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
-
-	"go.uber.org/zap"
-
-	"github.com/go-chi/chi/v5"
-
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
-
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/handler"
 )
 
 var (
@@ -25,6 +22,7 @@ var (
 	flagStoreInterval   string
 	flagFileStoragePath string
 	flagRestore         string
+	flagDatabase        string
 )
 
 func main() {
@@ -34,19 +32,22 @@ func main() {
 	if err := run(); err != nil {
 		panic(err)
 	}
+
+	connectToDatabase()
 }
 
-// test
 func parseFlags() {
+	ps := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
+		`localhost`, `user`, `psw`, `user`)
 	flag.StringVar(&flagRunAddr, "a", ":8080", "address and port to run server")
 	flag.StringVar(&flagLogLevel, "l", "info", "log level")
 	flag.StringVar(&flagStoreInterval, "i", "2s", "store interval")
 	flag.StringVar(&flagFileStoragePath, "f", "metrics-db.json", "storage path")
 	flag.StringVar(&flagRestore, "r", "false", "restore")
+	flag.StringVar(&flagDatabase, "d", ps, "configuration of SQL server")
 
 	flag.Parse()
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
-
 		flagRunAddr = envRunAddr
 	}
 	if envLogLevel := os.Getenv("LOG_LEVEL"); envLogLevel != "" {
@@ -62,7 +63,10 @@ func parseFlags() {
 	if envRestore := os.Getenv("RESTORE"); envRestore != "" {
 		flagRestore = envRestore
 	}
-	fmt.Println("Flags:", flagStoreInterval, flagFileStoragePath, flagRestore)
+
+	if envDatabase := os.Getenv("DATABASE_DSN"); envDatabase != "" {
+		flagDatabase = envDatabase
+	}
 }
 
 func run() error {
@@ -79,6 +83,7 @@ func run() error {
 	r.Route("/", func(r chi.Router) {
 
 		r.Get("/", handler.AllMetrics)
+		r.Get("/ping/", handler.Ping)
 		r.Post("/update/{typeMetric}/{metric}/{value}", handler.Update)
 		r.Get("/value/counter/{metric}", handler.MetricCounter)
 		r.Get("/value/gauge/{metric}", handler.MetricGauge)
@@ -91,8 +96,15 @@ func run() error {
 			handler.Memory.LoadStorage("metrics-db.json")
 		}
 	}
-	go tmp.SaveInFile(flagFileStoragePath, flagStoreInterval)
+	go filestorage.SaveInFile(flagFileStoragePath, flagStoreInterval)
 
 	return http.ListenAndServe(flagRunAddr, r)
 
+}
+
+func connectToDatabase() error {
+	db, err := sql.Open("pgx", flagDatabase)
+	defer db.Close()
+	config.GetInstance().SetDB(db)
+	return err
 }

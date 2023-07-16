@@ -3,21 +3,17 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
-
-	"go.uber.org/zap"
-
 	"net/http"
-
+	"strconv"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
-
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
-
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/models"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
 )
 
 var Memory storage.MemStorage
@@ -241,6 +237,15 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	enc := json.NewEncoder(w)
 	if err := enc.Encode(req); err != nil {
 		logger.Log.Info("error encoding response", zap.Error(err))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+func Ping(w http.ResponseWriter, r *http.Request) {
+	err := config.GetInstance().CheckConnection()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
