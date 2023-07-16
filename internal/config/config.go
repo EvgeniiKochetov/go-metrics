@@ -32,6 +32,7 @@ func (c *configuration) SetDB(dbConnection string) {
 	db, err := sql.Open("pgx", dbConnection)
 	fmt.Println("setDB:", db, "/string:", dbConnection)
 	if err != nil {
+		fmt.Println(err)
 		logger.Log.Info("can't establish connection to database: " + dbConnection)
 		return
 	}
