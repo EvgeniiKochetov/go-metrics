@@ -66,7 +66,7 @@ func parseFlags() {
 		fmt.Println(envDatabase)
 		flagDatabase = envDatabase
 	}
-
+	fmt.Println(flagDatabase)
 	config.GetInstance().SetDB(flagDatabase)
 }
 
