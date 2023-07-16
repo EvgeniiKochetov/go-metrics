@@ -1,17 +1,14 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
+	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
-
-	"github.com/go-chi/chi/v5"
-	"go.uber.org/zap"
 
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/models"
@@ -247,10 +244,8 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 func Ping(w http.ResponseWriter, r *http.Request) {
 	db := config.GetInstance().GetDatabaseConnection()
 
-	fmt.Println("Ping: ")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := db.PingContext(ctx); err != nil {
+	fmt.Println("Ping start ")
+	if err := db.Ping(); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Println(err)
 		fmt.Println("Ping end: ", w.Header())
