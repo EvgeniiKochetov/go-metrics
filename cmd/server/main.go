@@ -83,7 +83,7 @@ func run() error {
 	r.Route("/", func(r chi.Router) {
 
 		r.Get("/", handler.AllMetrics)
-		r.Get("/ping/", handler.Ping)
+		r.Get("/ping", handler.Ping)
 		r.Post("/update/{typeMetric}/{metric}/{value}", handler.Update)
 		r.Get("/value/counter/{metric}", handler.MetricCounter)
 		r.Get("/value/gauge/{metric}", handler.MetricGauge)
