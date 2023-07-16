@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
+	_ "github.com/jackc/pgx"
 	"sync"
 )
 
