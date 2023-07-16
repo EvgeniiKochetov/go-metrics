@@ -245,13 +245,11 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 func Ping(w http.ResponseWriter, r *http.Request) {
 	db := config.GetInstance().GetDatabaseConnection()
 	fmt.Println("Ping: ", db)
-	if db != nil {
-		err := db.Ping()
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	err := db.Ping()
+	if err != nil {
+		fmt.Println("!!!error in Ping:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
-	fmt.Println("!!!Ping: end function", db)
 	w.WriteHeader(http.StatusOK)
 }
