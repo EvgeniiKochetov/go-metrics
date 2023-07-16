@@ -65,6 +65,7 @@ func parseFlags() {
 	}
 	if len(flagDatabase) > 0 {
 		config.GetInstance().SetDB(flagDatabase)
+
 	}
 }
 

@@ -2,6 +2,7 @@ package config
 
 import (
 	"database/sql"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/database"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"sync"
@@ -35,7 +36,7 @@ func (c *configuration) SetDB(dbConnection string) {
 		return
 	}
 	c.db = db
-
+	database.CreateTable(db)
 }
 
 func (c *configuration) GetDatabaseConnection() *sql.DB {
