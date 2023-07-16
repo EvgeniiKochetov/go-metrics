@@ -11,7 +11,9 @@ func tableExists(db *sql.DB) error {
 }
 
 func CreateTable(db *sql.DB) error {
-	_, err := db.Exec("CREATE TABLE Metrics;")
+	createTable := fmt.Sprintf("CREATE TABLE Metrics (type varchar(10), name varchar(50), value DOUBLE PRECISION, counter integer)")
+
+	_, err := db.Exec(createTable)
 	if err != nil {
 		fmt.Println(err)
 		return err
