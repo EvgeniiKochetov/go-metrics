@@ -4,16 +4,18 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"net/http"
+	"os"
+	"strconv"
+
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/filestorage"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/handler"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx"
 	"go.uber.org/zap"
-	"net/http"
-	"os"
-	"strconv"
 )
 
 var (
