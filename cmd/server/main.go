@@ -104,6 +104,9 @@ func run() error {
 
 func connectToDatabase() error {
 	db, err := sql.Open("pgx", flagDatabase)
+	if err != nil {
+		fmt.Println(err)
+	}
 	defer db.Close()
 	config.GetInstance().SetDB(db)
 	return err
