@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
 	"net/http"
 	"os"
 	"strconv"
@@ -65,6 +66,8 @@ func parseFlags() {
 		fmt.Println(envDatabase)
 		flagDatabase = envDatabase
 	}
+
+	config.GetInstance().SetDB(flagDatabase)
 }
 
 func run() error {
