@@ -31,11 +31,11 @@ func main() {
 
 	parseFlags()
 
+	connectToDatabase()
+
 	if err := run(); err != nil {
 		panic(err)
 	}
-
-	connectToDatabase()
 }
 
 func parseFlags() {
