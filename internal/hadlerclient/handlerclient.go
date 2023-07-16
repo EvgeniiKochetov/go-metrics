@@ -1,7 +1,6 @@
 package handlerclient
 
 import (
-	"fmt"
 	"net/http"
 	"runtime"
 )
@@ -20,10 +19,10 @@ func SendMetrics(client *http.Client, serveraddr, typeOfMetric, nameOfMetric, va
 	if err != nil {
 		return err
 	}
-	fmt.Println(req)
+	//fmt.Println(req)
 	response, err := client.Do(req)
 	if err != nil {
-		fmt.Println(response)
+		//fmt.Println(response)
 		return err
 	}
 	defer response.Body.Close()
