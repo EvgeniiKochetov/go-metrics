@@ -244,8 +244,9 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 
 func Ping(w http.ResponseWriter, r *http.Request) {
 	db := config.GetInstance().GetDatabaseConnection()
-	fmt.Println("this is ping handler")
+	fmt.Println("this is ping handler", db)
 	if db == nil {
+		fmt.Println("db connection is nil")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
