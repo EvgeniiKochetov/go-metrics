@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
 	"net/http"
 	"strconv"
 	"strings"
@@ -242,10 +243,11 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
-	//err := config.GetInstance().CheckConnection()
-	//if err != nil {
-	//	w.WriteHeader(http.StatusInternalServerError)
-	//	return
-	//}
+	db := config.GetInstance().GetDatabaseConnection()
+	err := db.Ping()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 }

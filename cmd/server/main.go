@@ -1,14 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
 	"fmt"
 	"net/http"
 	"os"
 	"strconv"
 
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/filestorage"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/handler"
@@ -30,9 +28,6 @@ var (
 func main() {
 
 	parseFlags()
-
-	//go connectToDatabase()
-
 	if err := run(); err != nil {
 		panic(err)
 	}
@@ -103,16 +98,4 @@ func run() error {
 
 	return http.ListenAndServe(flagRunAddr, r)
 
-}
-
-func connectToDatabase() error {
-	fmt.Println(flagDatabase)
-	db, err := sql.Open("pgx", flagDatabase)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer db.Close()
-	config.GetInstance().SetDB(db)
-
-	return err
 }
