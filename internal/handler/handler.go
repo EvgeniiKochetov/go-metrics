@@ -252,5 +252,6 @@ func Ping(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	fmt.Println("!!!Ping: end function", db)
 	w.WriteHeader(http.StatusOK)
 }
