@@ -2,6 +2,7 @@ package config
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 	"sync"
 )
@@ -29,6 +30,7 @@ func GetInstance() *configuration {
 
 func (c *configuration) SetDB(dbConnection string) {
 	db, err := sql.Open("pgx", dbConnection)
+	fmt.Println("setDB:", db, "/string:", dbConnection)
 	if err != nil {
 		logger.Log.Info("can't establish connection to database: " + dbConnection)
 		return
