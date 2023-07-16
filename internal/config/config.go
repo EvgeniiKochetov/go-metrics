@@ -34,7 +34,6 @@ func (c *configuration) SetDB(dbConnection string) {
 		logger.Log.Info("can't establish connection to database: " + dbConnection)
 		return
 	}
-	defer db.Close()
 	c.db = db
 
 }
