@@ -31,7 +31,7 @@ func main() {
 
 	parseFlags()
 
-	connectToDatabase()
+	go connectToDatabase()
 
 	if err := run(); err != nil {
 		panic(err)
