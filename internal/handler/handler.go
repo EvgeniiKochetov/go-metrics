@@ -10,7 +10,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/models"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
@@ -243,10 +242,10 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
-	err := config.GetInstance().CheckConnection()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	//err := config.GetInstance().CheckConnection()
+	//if err != nil {
+	//	w.WriteHeader(http.StatusInternalServerError)
+	//	return
+	//}
 	w.WriteHeader(http.StatusOK)
 }
