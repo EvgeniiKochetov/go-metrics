@@ -40,8 +40,8 @@ func CreateTable(db *sql.DB) error {
 func AddGaugeMetric(db *sql.DB, nameOfMetric string, value string) error {
 	logger.Log.Info("Add gauge metric into database begin")
 
-	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, value FROM Metrics WHERE type=\"gauge\" AND nameOfMetric=?) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
-		"WHEN NOT MATCHED THEN INSERT (type, name, value)  VALUES (\"gauge\", ?, ?)" +
+	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, value FROM Metrics WHERE type='gauge' AND nameOfMetric=?) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
+		"WHEN NOT MATCHED THEN INSERT (type, name, value)  VALUES ('gauge', ?, ?)" +
 		"WHEN MATCHED THEN UPDATE SET value = ?"
 	floatValue, err := strconv.ParseFloat(value, 64)
 	if err != nil {
