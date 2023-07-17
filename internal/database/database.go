@@ -64,14 +64,15 @@ func AddCounterMetric(db *sql.DB, nameOfMetric string, value string) error {
 	int64Value, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		logger.Log.Error(err.Error())
-		return nil
+		return err
 	}
 	int64Value++
 	_, err = db.Exec(request, nameOfMetric, nameOfMetric, int64Value, int64Value)
 	if err != nil {
 		logger.Log.Error(err.Error())
-		return nil
+		return err
 	}
+	logger.Log.Info("Add counter metric into database end without errors")
 	return nil
 }
 func GetGaugeMetric(db *sql.DB, nameOfMetric string) (*float64, error) {
