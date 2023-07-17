@@ -38,17 +38,8 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	switch typeOfMetric {
 	case "gauge":
 		err = Memory.ChangeGauge(nameOfMetric, valueOfMetric)
-		db := config.GetInstance().GetDatabaseConnection()
-		if db != nil {
-			database.AddGaugeMetric(db, nameOfMetric, valueOfMetric)
-		}
 	case "counter":
 		err = Memory.ChangeCounter(nameOfMetric, valueOfMetric)
-		db := config.GetInstance().GetDatabaseConnection()
-		if db != nil {
-			database.AddCounterMetric(db, nameOfMetric, valueOfMetric)
-		}
-
 	default:
 		{
 			http.Error(w, "Mistake in request! Wrong type metric", http.StatusBadRequest)
@@ -102,7 +93,7 @@ func MetricCounter(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
-	logger.Log.Info("start UpdateUseJSON")
+
 	fmt.Println()
 	if r.Method != http.MethodPost {
 		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
@@ -141,6 +132,11 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		db := config.GetInstance().GetDatabaseConnection()
+		if db != nil {
+			database.AddGaugeMetric(db, req.ID, value)
+		}
+
 	case "counter":
 
 		err := Memory.ChangeCounter(req.ID, strconv.FormatInt(*req.Delta, 10))
@@ -149,6 +145,11 @@ func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		db := config.GetInstance().GetDatabaseConnection()
+		if db != nil {
+			database.AddCounterMetric(db, req.ID, strconv.FormatInt(*req.Delta, 10))
+		}
+
 	default:
 		{
 			http.Error(w, "Mistake in request! Wrong type metric", http.StatusBadRequest)
