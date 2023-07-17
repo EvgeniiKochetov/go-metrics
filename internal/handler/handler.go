@@ -38,7 +38,10 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	switch typeOfMetric {
 	case "gauge":
 		err = Memory.ChangeGauge(nameOfMetric, valueOfMetric)
-		database.AddGaugeMetric(config.GetInstance().GetDatabaseConnection(), nameOfMetric, valueOfMetric)
+		db := config.GetInstance().GetDatabaseConnection()
+		if db != nil {
+			database.AddGaugeMetric(db, nameOfMetric, valueOfMetric)
+		}
 	case "counter":
 		err = Memory.ChangeCounter(nameOfMetric, valueOfMetric)
 	default:
