@@ -44,6 +44,11 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		}
 	case "counter":
 		err = Memory.ChangeCounter(nameOfMetric, valueOfMetric)
+		db := config.GetInstance().GetDatabaseConnection()
+		if db != nil {
+			database.AddCounterMetric(db, nameOfMetric, valueOfMetric)
+		}
+
 	default:
 		{
 			http.Error(w, "Mistake in request! Wrong type metric", http.StatusBadRequest)
