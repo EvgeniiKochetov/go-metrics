@@ -58,9 +58,9 @@ func AddGaugeMetric(db *sql.DB, nameOfMetric string, value string) error {
 
 func AddCounterMetric(db *sql.DB, nameOfMetric string, value string) error {
 	logger.Log.Info("Add counter metric into database begin")
-	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, counter FROM Metrics WHERE type=\"counter\" AND nameOfMetric=?) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
-		"WHEN NOT MATCHED THEN INSERT (type, name, counter)  VALUES (\"gauge\", ?, ?)" +
-		"WHEN MATCHED THEN UPDATE SET counter = ?"
+	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, counter FROM Metrics WHERE type='counter' AND nameOfMetric=?) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
+		" WHEN NOT MATCHED THEN INSERT (type, name, counter)  VALUES ('gauge', ?, ?)" +
+		" WHEN MATCHED THEN UPDATE SET counter = ?"
 	int64Value, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		logger.Log.Error(err.Error())
