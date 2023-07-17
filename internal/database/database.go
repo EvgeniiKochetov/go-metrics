@@ -27,7 +27,7 @@ func DeleteTable(db *sql.DB) error {
 }
 func CreateTable(db *sql.DB) error {
 
-	createTable := "CREATE TABLE Metrics (id string, type varchar(10), name varchar(50), value DOUBLE PRECISION, counter integer)"
+	createTable := "CREATE TABLE Metrics (id varchar(50), type varchar(10), name varchar(50), value DOUBLE PRECISION, counter integer)"
 
 	_, err := db.Exec(createTable)
 	if err != nil {
