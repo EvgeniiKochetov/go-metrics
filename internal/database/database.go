@@ -45,11 +45,12 @@ func AddGaugeMetric(db *sql.DB, nameOfMetric string, value string) error {
 		"WHEN MATCHED THEN UPDATE SET value = ?"
 	floatValue, err := strconv.ParseFloat(value, 64)
 	if err != nil {
+		logger.Log.Error(err.Error())
 		return nil
 	}
 	_, err = db.Exec(request, nameOfMetric, nameOfMetric, floatValue, floatValue)
 	if err != nil {
-		fmt.Println(err)
+		logger.Log.Error(err.Error())
 		return nil
 	}
 	return nil
@@ -62,13 +63,13 @@ func AddCounterMetric(db *sql.DB, nameOfMetric string, value string) error {
 		"WHEN MATCHED THEN UPDATE SET counter = ?"
 	int64Value, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
-		fmt.Println(err)
+		logger.Log.Error(err.Error())
 		return nil
 	}
 	int64Value++
 	_, err = db.Exec(request, nameOfMetric, nameOfMetric, int64Value, int64Value)
 	if err != nil {
-		fmt.Println(err)
+		logger.Log.Error(err.Error())
 		return nil
 	}
 	return nil
