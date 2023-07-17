@@ -27,7 +27,7 @@ func DeleteTable(db *sql.DB) error {
 }
 func CreateTable(db *sql.DB) error {
 
-	createTable := "CREATE TABLE Metrics (type varchar(10), name varchar(50), value DOUBLE PRECISION, counter integer)"
+	createTable := "CREATE TABLE Metrics (id string, type varchar(10), name varchar(50), value DOUBLE PRECISION, counter integer)"
 
 	_, err := db.Exec(createTable)
 	if err != nil {
@@ -41,14 +41,14 @@ func AddGaugeMetric(db *sql.DB, nameOfMetric string, value string) error {
 	logger.Log.Info("Add gauge metric into database begin")
 
 	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, value FROM Metrics WHERE type='gauge' AND name=$1) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
-		"WHEN NOT MATCHED THEN INSERT (type, name, value)  VALUES ('gauge', $2, $3)" +
-		"WHEN MATCHED THEN UPDATE SET value = $4"
+		"WHEN NOT MATCHED THEN INSERT (id, type, name, value)  VALUES ($1, 'gauge', $1, $2)" +
+		"WHEN MATCHED THEN UPDATE SET value = $2"
 	floatValue, err := strconv.ParseFloat(value, 64)
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return nil
 	}
-	_, err = db.Exec(request, nameOfMetric, nameOfMetric, floatValue, floatValue)
+	_, err = db.Exec(request, nameOfMetric, floatValue)
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return nil
@@ -58,16 +58,16 @@ func AddGaugeMetric(db *sql.DB, nameOfMetric string, value string) error {
 
 func AddCounterMetric(db *sql.DB, nameOfMetric string, value string) error {
 	logger.Log.Info("Add counter metric into database begin")
-	request := "MERGE INTO Metrics USING (SELECT type, name, counter FROM Metrics WHERE type='counter' AND name=$1) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
-		" WHEN NOT MATCHED THEN INSERT (type, name, counter)  VALUES ('gauge', $2, $3)" +
-		" WHEN MATCHED THEN UPDATE SET counter = $4"
+	request := "MERGE INTO Metrics USING (SELECT id, type, name, counter FROM Metrics WHERE type='counter' AND name=$1) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
+		" WHEN NOT MATCHED THEN INSERT (id, type, name, counter)  VALUES ($1, 'gauge', $1, $2)" +
+		" WHEN MATCHED THEN UPDATE SET counter = $2"
 	int64Value, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return err
 	}
 	int64Value++
-	_, err = db.Exec(request, nameOfMetric, nameOfMetric, int64Value, int64Value)
+	_, err = db.Exec(request, nameOfMetric, int64Value)
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return err
