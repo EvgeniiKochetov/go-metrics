@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
+	"strconv"
 )
 
 func tableExists(db *sql.DB) (bool, error) {
@@ -35,14 +37,42 @@ func CreateTable(db *sql.DB) error {
 	return nil
 }
 
-func AddGaugeMetric(db *sql.DB, nameOfMetric string, value float64) error {
+func AddGaugeMetric(db *sql.DB, nameOfMetric string, value string) error {
+	logger.Log.Info("Add gauge metric into database begin")
+
+	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, value FROM Metrics WHERE type=\"gauge\" AND nameOfMetric=?) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
+		"WHEN NOT MATCHED THEN INSERT (type, name, value)  VALUES (\"gauge\", ?, ?)" +
+		"WHEN MATCHED THEN UPDATE SET value = ?"
+	floatValue, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return nil
+	}
+	_, err = db.Exec(request, nameOfMetric, nameOfMetric, floatValue, floatValue)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
 	return nil
 }
 
-func AddCounterMetric(db *sql.DB, nameOfMetric string, value float64) error {
+func AddCounterMetric(db *sql.DB, nameOfMetric string, value string) error {
+	logger.Log.Info("Add counter metric into database begin")
+	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, counter FROM Metrics WHERE type=\"counter\" AND nameOfMetric=?) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
+		"WHEN NOT MATCHED THEN INSERT (type, name, counter)  VALUES (\"gauge\", ?, ?)" +
+		"WHEN MATCHED THEN UPDATE SET counter = ?"
+	int64Value, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	int64Value++
+	_, err = db.Exec(request, nameOfMetric, nameOfMetric, int64Value, int64Value)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
 	return nil
 }
-
 func GetGaugeMetric(db *sql.DB, nameOfMetric string) (*float64, error) {
 	pointer := float64(0)
 	return &pointer, nil

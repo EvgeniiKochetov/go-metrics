@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/database"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 	"net/http"
@@ -23,7 +24,7 @@ func init() {
 
 func Update(w http.ResponseWriter, r *http.Request) {
 	var err error
-	//test
+
 	typeOfMetric := chi.URLParam(r, "typeMetric")
 	nameOfMetric := chi.URLParam(r, "metric")
 	valueOfMetric := chi.URLParam(r, "value")
@@ -37,6 +38,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	switch typeOfMetric {
 	case "gauge":
 		err = Memory.ChangeGauge(nameOfMetric, valueOfMetric)
+		database.AddGaugeMetric(config.GetInstance().GetDatabaseConnection(), nameOfMetric, valueOfMetric)
 	case "counter":
 		err = Memory.ChangeCounter(nameOfMetric, valueOfMetric)
 	default:

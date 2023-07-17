@@ -52,7 +52,6 @@ func parseFlags() {
 		flagStoreInterval = envStoreInterval + "s"
 	}
 	if envStorePath := os.Getenv("FILE_STORAGE_PATH"); envStorePath != "" {
-		//flagFileStoragePath = envStorePath
 		flagFileStoragePath = "metrics-db.json"
 	}
 	if envRestore := os.Getenv("RESTORE"); envRestore != "" {
