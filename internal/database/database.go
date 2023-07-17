@@ -40,8 +40,8 @@ func CreateTable(db *sql.DB) error {
 func AddGaugeMetric(db *sql.DB, nameOfMetric string, value string) error {
 	logger.Log.Info("Add gauge metric into database begin")
 
-	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, value FROM Metrics WHERE type='gauge' AND nameOfMetric=?) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
-		"WHEN NOT MATCHED THEN INSERT (type, name, value)  VALUES ('gauge', ?, ?)" +
+	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, value FROM Metrics WHERE type='gauge' AND nameOfMetric=$N) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
+		"WHEN NOT MATCHED THEN INSERT (type, name, value)  VALUES ('gauge', $N, $N)" +
 		"WHEN MATCHED THEN UPDATE SET value = ?"
 	floatValue, err := strconv.ParseFloat(value, 64)
 	if err != nil {
@@ -58,8 +58,8 @@ func AddGaugeMetric(db *sql.DB, nameOfMetric string, value string) error {
 
 func AddCounterMetric(db *sql.DB, nameOfMetric string, value string) error {
 	logger.Log.Info("Add counter metric into database begin")
-	request := "MERGE INTO Metrics AS Metrics USING (SELECT type, name, counter FROM Metrics WHERE type='counter' AND nameOfMetric=?) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
-		" WHEN NOT MATCHED THEN INSERT (type, name, counter)  VALUES ('gauge', ?, ?)" +
+	request := "MERGE INTO Metrics USING (SELECT type, name, counter FROM Metrics WHERE type='counter' AND nameOfMetric=$N) AS ExistMetric ON Metrics.type = ExistMetric.type AND Metrics.name = ExistMetric.name" +
+		" WHEN NOT MATCHED THEN INSERT (type, name, counter)  VALUES ('gauge', $N, $N)" +
 		" WHEN MATCHED THEN UPDATE SET counter = ?"
 	int64Value, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {

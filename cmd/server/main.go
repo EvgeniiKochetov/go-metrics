@@ -87,6 +87,7 @@ func run() error {
 		r.Get("/value/counter/{metric}", handler.MetricCounter)
 		r.Get("/value/gauge/{metric}", handler.MetricGauge)
 		r.Post("/update/", handler.UpdateUseJSON)
+		r.Post("/updates/", handler.UpdatesUseJSON)
 		r.Post("/value/", handler.ValueUseJSON)
 	})
 	if flRestore, err := strconv.ParseBool(flagRestore); err == nil {

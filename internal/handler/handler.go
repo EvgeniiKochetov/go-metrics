@@ -252,6 +252,10 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func UpdatesUseJSON(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func Ping(w http.ResponseWriter, r *http.Request) {
 	db := config.GetInstance().GetDatabaseConnection()
 
