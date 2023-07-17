@@ -102,7 +102,7 @@ func MetricCounter(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUseJSON(w http.ResponseWriter, r *http.Request) {
-
+	logger.Log.Info("start UpdateUseJSON")
 	fmt.Println()
 	if r.Method != http.MethodPost {
 		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
