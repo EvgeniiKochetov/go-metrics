@@ -253,7 +253,9 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdatesUseJSON(w http.ResponseWriter, r *http.Request) {
+	logger.Log.Info("UpdatesUseJSON begin")
 	w.WriteHeader(http.StatusOK)
+	logger.Log.Info("UpdatesUseJSON end")
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
