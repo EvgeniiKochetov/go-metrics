@@ -253,9 +253,83 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdatesUseJSON(w http.ResponseWriter, r *http.Request) {
-	logger.Log.Info("UpdatesUseJSON begin")
+	var req []models.Metrics
+	var resp []models.Metrics
+
+	dec := json.NewDecoder(r.Body)
+	if err := dec.Decode(&req); err != nil {
+		logger.Log.Info("cannot decode request JSON body", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	for _, v := range req {
+		if (v.MType != "gauge") && (v.MType != "counter") {
+			logger.Log.Debug("unsupported request type", zap.String("type", v.MType))
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			return
+		}
+		var value string
+		switch v.MType {
+		case "gauge":
+
+			fmt.Println(*v.Value)
+
+			if float64(*v.Value) == float64(int(*v.Value)) {
+				value = strconv.FormatFloat(float64(*v.Value), 'f', 1, 64)
+			} else {
+				value = strconv.FormatFloat(*v.Value, 'f', 24, 64)
+			}
+			fmt.Println(value)
+			err := Memory.ChangeGauge(v.ID, value)
+			if err != nil {
+				logger.Log.Info("cannot change gauge", zap.Error(err))
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			db := config.GetInstance().GetDatabaseConnection()
+			if db != nil {
+				database.AddGaugeMetric(db, v.ID, value)
+			}
+
+		case "counter":
+
+			err := Memory.ChangeCounter(v.ID, strconv.FormatInt(*v.Delta, 10))
+			if err != nil {
+				logger.Log.Info("cannot change gauge", zap.Error(err))
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			db := config.GetInstance().GetDatabaseConnection()
+			if db != nil {
+				database.AddCounterMetric(db, v.ID, strconv.FormatInt(*v.Delta, 10))
+			}
+
+		default:
+			{
+				http.Error(w, "Mistake in request! Wrong type metric", http.StatusBadRequest)
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+		}
+		respValue := models.Metrics{
+			ID:    v.ID,
+			MType: v.MType,
+			Delta: v.Delta,
+			Value: v.Value,
+		}
+		resp = append(resp, respValue)
+
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(resp); err != nil {
+		logger.Log.Info("error encoding response", zap.Error(err))
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	logger.Log.Info("UpdatesUseJSON end")
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
