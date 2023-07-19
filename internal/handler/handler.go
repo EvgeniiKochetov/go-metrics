@@ -7,6 +7,7 @@ import (
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/database"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -253,11 +254,23 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdatesUseJSON(w http.ResponseWriter, r *http.Request) {
-	var req []models.Metrics
-	var resp []models.Metrics
+	fmt.Println()
+	if r.Method != http.MethodPost {
+		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 
-	dec := json.NewDecoder(r.Body)
-	if err := dec.Decode(&req); err != nil {
+	var req, resp []models.Metrics
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		logger.Log.Info("cannot decode request JSON body", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	err = json.Unmarshal(body, &req)
+	if err != nil {
 		logger.Log.Info("cannot decode request JSON body", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -311,14 +324,6 @@ func UpdatesUseJSON(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-		respValue := models.Metrics{
-			ID:    v.ID,
-			MType: v.MType,
-			Delta: v.Delta,
-			Value: v.Value,
-		}
-		resp = append(resp, respValue)
-
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -328,8 +333,8 @@ func UpdatesUseJSON(w http.ResponseWriter, r *http.Request) {
 		logger.Log.Info("error encoding response", zap.Error(err))
 		return
 	}
-
 	w.WriteHeader(http.StatusOK)
+
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
