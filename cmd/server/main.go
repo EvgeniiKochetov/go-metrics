@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 	"os"
 	"strconv"
@@ -12,7 +13,6 @@ import (
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/gzip"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/handler"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/logger"
-	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 )
 
