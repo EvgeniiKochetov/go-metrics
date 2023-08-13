@@ -9,8 +9,8 @@ import (
 
 func estimateHash(value []byte, key string) [32]byte {
 
-	for _, v := range []byte(key) {
-		value = append(value, v)
+	for _, v := range key {
+		value = append(value, byte(v))
 	}
 
 	return sha256.Sum256(value)
