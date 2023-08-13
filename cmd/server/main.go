@@ -24,6 +24,7 @@ var (
 	flagFileStoragePath string
 	flagRestore         string
 	flagDatabase        string
+	flagKey             string
 )
 
 func main() {
@@ -41,7 +42,7 @@ func parseFlags() {
 	flag.StringVar(&flagFileStoragePath, "f", "metrics-db.json", "storage path")
 	flag.StringVar(&flagRestore, "r", "false", "restore")
 	flag.StringVar(&flagDatabase, "d", "", "configuration of SQL server")
-	//flag.StringVar(&flagKey, "k", "", "use key ")
+	flag.StringVar(&flagKey, "k", "", "use key ")
 
 	flag.Parse()
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
