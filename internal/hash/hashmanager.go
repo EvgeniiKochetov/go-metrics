@@ -19,6 +19,7 @@ func estimateHash(value []byte, key string) [32]byte {
 
 func CheckHash(h http.Handler) http.Handler {
 	hashFn := func(w http.ResponseWriter, r *http.Request) {
+		var estimatedHash [32]byte
 		key := config.GetInstance().GetFlag("k")
 		if key != "" {
 			b := make([]byte, 0)
@@ -33,9 +34,9 @@ func CheckHash(h http.Handler) http.Handler {
 		}
 
 		h.ServeHTTP(w, r)
-		//if key != "" {
-		//
-		//}
+		if key != "" {
+			w.Header().Set("HashSHA256", string(estimatedHash[:]))
+		}
 	}
 	return http.HandlerFunc(hashFn)
 }
