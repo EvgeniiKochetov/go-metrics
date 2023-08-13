@@ -52,7 +52,7 @@ func WithLogging(h http.Handler) http.Handler {
 
 		duration := time.Since(start)
 		sugar := Log.Sugar()
-		sugar.Infoln(
+		sugar.Debug(
 			"uri", r.RequestURI,
 			"method", r.Method,
 			"status", responseData.status,
