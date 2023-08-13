@@ -1,6 +1,10 @@
 package storage
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/models"
+	"os"
 	"strconv"
 )
 
@@ -61,4 +65,60 @@ func (m *MemStorage) GetAllMetrics() ([]string, bool) {
 	}
 
 	return slice, true
+}
+
+func (m *MemStorage) SaveStorage(filename string) error {
+	slice := make([]models.Metrics, 0)
+
+	for k, v := range m.metricsgauge {
+		pointer := float64(v)
+		slice = append(slice, models.Metrics{
+			ID:    k,
+			MType: "gauge",
+			Delta: nil,
+			Value: &pointer,
+		})
+	}
+
+	for k, v := range m.metricscounter {
+		pointer := int64(v)
+		slice = append(slice, models.Metrics{
+			ID:    k,
+			MType: "counter",
+			Delta: &pointer,
+			Value: nil,
+		})
+	}
+
+	data, err := json.Marshal(slice)
+
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filename, data, 0666)
+}
+
+func (m *MemStorage) LoadStorage(filename string) error {
+	fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!RESTORE " + filename)
+	data, err := os.ReadFile(filename)
+
+	if err != nil {
+		fmt.Println("Ошибка открытия файла")
+		return err
+	}
+
+	slice := make([]models.Metrics, 0)
+	json.Unmarshal(data, &slice)
+	fmt.Println(slice)
+	for _, v := range slice {
+
+		if v.MType == "gauge" {
+			m.ChangeGauge(v.ID, strconv.FormatFloat(*v.Value, 'f', -1, 64))
+		} else {
+			fmt.Println("counter ", v.ID, *v.Delta)
+			m.ChangeCounter(v.ID, strconv.FormatInt(*v.Delta, 10))
+		}
+	}
+	return nil
 }

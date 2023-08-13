@@ -1,9 +1,5 @@
 package metric
 
-import "github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
-
-var StorageMetric storage.MemStorage
-
 func GetMapMetrics() map[string]string {
 	return map[string]string{
 		"Alloc":         "gauge",
