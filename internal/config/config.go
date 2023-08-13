@@ -11,7 +11,8 @@ import (
 var lock = &sync.Mutex{}
 
 type configuration struct {
-	db *sql.DB
+	db      *sql.DB
+	configs map[string]string
 }
 
 var instanceOfConf *configuration = nil
@@ -42,4 +43,13 @@ func (c *configuration) SetDB(dbConnection string) {
 
 func (c *configuration) GetDatabaseConnection() *sql.DB {
 	return c.db
+}
+
+func (c *configuration) GetFlag(flagName string) string {
+	return c.configs[flagName]
+}
+
+func (c *configuration) SetFlag(flagName string, flagValue string) error {
+	c.configs[flagName] = flagValue
+	return nil
 }

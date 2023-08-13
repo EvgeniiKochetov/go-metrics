@@ -254,7 +254,6 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdatesUseJSON(w http.ResponseWriter, r *http.Request) {
-	fmt.Println()
 	if r.Method != http.MethodPost {
 		logger.Log.Debug("got request with bad method", zap.String("method", r.Method))
 		w.WriteHeader(http.StatusMethodNotAllowed)
