@@ -35,7 +35,7 @@ func main() {
 	flag.StringVar(&flagReportInterval, "r", "10", "report interval")
 	flag.StringVar(&flagPollInterval, "p", "2", "poll interval")
 	flag.StringVar(&flagKey, "k", "", "key for hash")
-
+	flag.StringVar(&flagRateLimit, "l", "", "rate limit")
 	flag.Parse()
 
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
@@ -52,6 +52,10 @@ func main() {
 
 	if envKey := os.Getenv("KEY"); envKey != "" {
 		flagKey = envKey
+	}
+
+	if envRateLimit := os.Getenv("RATE_LIMIT"); envRateLimit != "" {
+		flagRateLimit = envRateLimit
 	}
 
 	serveraddr = "http://" + flagServPort + "/update/"

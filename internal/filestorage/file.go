@@ -11,8 +11,13 @@ import (
 )
 
 func SaveInFile(filename string, interval string) {
+	intervalDur, err := time.ParseDuration(interval)
+	if err != nil {
+		fmt.Println("SAVE IN FILE Error")
+		logger.Log.Error("can't convert interval")
+		return
+	}
 
-	freq, err := time.ParseDuration(interval)
 	if err != nil {
 		fmt.Println("SAVE IN FILE Error")
 		logger.Log.Error("can't convert interval")
@@ -33,7 +38,7 @@ func SaveInFile(filename string, interval string) {
 			logger.Log.Error("error save metrics")
 			return
 		}
-		time.Sleep(time.Duration(freq))
+		time.Sleep(intervalDur * time.Second)
 	}
 
 }
