@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
+	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/hash"
 	"net/http"
 	"os"
 	"strconv"
@@ -80,7 +81,7 @@ func run() error {
 	}
 
 	logger.Log.Info("Running server", zap.String("address", flagRunAddr))
-	r.Use(logger.RequestLogger, gzip.MyGzipHandle)
+	r.Use(hash.CheckHash, logger.RequestLogger, gzip.MyGzipHandle)
 	r.NotFoundHandler()
 	r.Route("/", func(r chi.Router) {
 

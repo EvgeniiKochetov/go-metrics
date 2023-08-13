@@ -33,9 +33,9 @@ func CheckHash(h http.Handler) http.Handler {
 		}
 
 		h.ServeHTTP(w, r)
-		if key != "" {
-
-		}
+		//if key != "" {
+		//
+		//}
 	}
 	return http.HandlerFunc(hashFn)
 }
