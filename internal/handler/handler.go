@@ -250,7 +250,6 @@ func ValueUseJSON(w http.ResponseWriter, r *http.Request) {
 		logger.Log.Info("error encoding response", zap.Error(err))
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 func UpdatesUseJSON(w http.ResponseWriter, r *http.Request) {
