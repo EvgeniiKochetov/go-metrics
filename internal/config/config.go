@@ -23,7 +23,7 @@ func GetInstance() *configuration {
 		defer lock.Unlock()
 
 		if instanceOfConf == nil {
-			instanceOfConf = &configuration{}
+			instanceOfConf = &configuration{configs: map[string]string{}}
 		}
 	}
 
