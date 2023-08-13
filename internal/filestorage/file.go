@@ -12,11 +12,6 @@ import (
 
 func SaveInFile(filename string, interval string) {
 	intervalDur, err := time.ParseDuration(interval)
-	if err != nil {
-		fmt.Println("SAVE IN FILE Error")
-		logger.Log.Error("can't convert interval")
-		return
-	}
 
 	if err != nil {
 		fmt.Println("SAVE IN FILE Error")
