@@ -3,6 +3,7 @@ package hash
 import (
 	"bytes"
 	"crypto/sha256"
+	"fmt"
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/config"
 	"net/http"
 )
@@ -21,6 +22,7 @@ func CheckHash(h http.Handler) http.Handler {
 	hashFn := func(w http.ResponseWriter, r *http.Request) {
 		var estimatedHash [32]byte
 		key := config.GetInstance().GetFlag("k")
+		fmt.Println(key)
 		if key != "" {
 			b := make([]byte, 0)
 			r.Body.Read(b)
