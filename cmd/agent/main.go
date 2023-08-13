@@ -26,6 +26,7 @@ var (
 	flagReportInterval string
 	flagPollInterval   string
 	flagKey            string
+	flagRateLimit      string
 )
 
 func main() {
@@ -34,6 +35,7 @@ func main() {
 	flag.StringVar(&flagReportInterval, "r", "10", "report interval")
 	flag.StringVar(&flagPollInterval, "p", "2", "poll interval")
 	flag.StringVar(&flagKey, "k", "", "key for hash")
+
 	flag.Parse()
 
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
