@@ -2,29 +2,35 @@ package runtimemetric
 
 import (
 	"fmt"
-	"math/rand"
-	"strconv"
-
 	"net/http"
-
 	"reflect"
-
 	"time"
+
+	"github.com/shirou/gopsutil/v3/mem"
 
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/hadlerclient"
 
 	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/metric"
-
-	"github.com/EvgeniiKochetov/go-metrics-tpl/internal/storage"
 )
 
-func Run(client *http.Client, serveraddr string, reportInterval, pollInterval int) {
+type metricData struct {
+	typeOfMetric string
+	nameOfMetric string
+	value        string
+}
 
-	metricmap := metric.GetMapMetrics()
-	storageMetric := storage.NewMemStorage()
-	var value string
-	var ok bool
-	var counter int
+func GetExtraMetrics(pollInterval int, metrics chan metricData) {
+	for {
+		v, _ := mem.VirtualMemory()
+
+		metrics <- metricData{"gauge", "TotalMemory", string(v.Total)}
+		metrics <- metricData{"gauge", "FreeMemory", string(v.Free)}
+		metrics <- metricData{"gauge", "Used", string(v.Used)}
+		time.Sleep(time.Second * time.Duration(pollInterval))
+	}
+}
+
+func GetMetrics(pollInterval int, metrics chan metricData) {
 
 	for {
 		m := handlerclient.GetMetrics()
@@ -34,31 +40,78 @@ func Run(client *http.Client, serveraddr string, reportInterval, pollInterval in
 		for i := 0; i < val.NumField(); i++ {
 			field := val.Field(i)
 			nameMetric := typeOfT.Field(i).Name
-			if nameMetric == "counter" {
-				storageMetric.ChangeCounter(nameMetric, fmt.Sprint(field.Interface()))
-			} else {
-				storageMetric.ChangeGauge(nameMetric, fmt.Sprint(field.Interface()))
-			}
-		}
-
-		for k, typeOfMetric := range metricmap {
-			if typeOfMetric == "counter" {
-				value, ok = storageMetric.GetMetricCounter(k)
-			} else {
-				value, ok = storageMetric.GetMetricGauge(k)
-			}
-
-			if ok {
-				handlerclient.SendMetrics(client, serveraddr, typeOfMetric, k, value)
-				counter++
-
-				handlerclient.SendMetrics(client, serveraddr, "counter", "PollCount", strconv.FormatInt(int64(counter), 10))
-				handlerclient.SendMetrics(client, serveraddr, "gauge", "RandomValue", strconv.FormatFloat(rand.Float64(), 'f', -1, 64))
-			}
-			time.Sleep(time.Second * time.Duration(reportInterval))
+			metrics <- metricData{"gauge", nameMetric, fmt.Sprint(field.Interface())}
 		}
 
 		time.Sleep(time.Second * time.Duration(pollInterval))
 	}
+}
+
+func SendMetrics(reportInterval int, client *http.Client, serveraddr string, key string, metrics chan metricData) {
+	for {
+
+		var metricdata metricData
+		metricdata = <-metrics
+		//var counter = 0
+		//handlerclient.SendMetric(client, serveraddr, metricdata.typeOfMetric, metricdata.nameOfMetric, metricdata.value, key)
+		//handlerclient.SendMetric(client, serveraddr, "counter", "PollCount", strconv.FormatInt(int64(counter), 10), key)
+		fmt.Println(metricdata)
+		time.Sleep(time.Second * time.Duration(reportInterval))
+	}
+}
+
+func Run(client *http.Client, serveraddr string, reportInterval, pollInterval int, key string, rateLimit int) {
+
+	metrics := make(chan metricData, len(metric.GetMapMetrics()))
+
+	go GetExtraMetrics(pollInterval, metrics)
+	go GetMetrics(pollInterval, metrics)
+
+	defer close(metrics)
+
+	for a := 1; a <= rateLimit; a++ {
+		go SendMetrics(reportInterval, client, serveraddr, key, metrics)
+	}
+
+	//metricmap := metric.GetMapMetrics()
+	//storageMetric := storage.NewMemStorage()
+	//var value string
+	//var ok bool
+	//var counter int
+
+	//for {
+	//	m := handlerclient.GetMetrics()
+	//	val := reflect.ValueOf(m).Elem()
+	//	typeOfT := val.Type()
+	//
+	//	for i := 0; i < val.NumField(); i++ {
+	//		field := val.Field(i)
+	//		nameMetric := typeOfT.Field(i).Name
+	//		if nameMetric == "counter" {
+	//			storageMetric.ChangeCounter(nameMetric, fmt.Sprint(field.Interface()))
+	//		} else {
+	//			storageMetric.ChangeGauge(nameMetric, fmt.Sprint(field.Interface()))
+	//		}
+	//	}
+	//
+	//	for k, typeOfMetric := range metricmap {
+	//		if typeOfMetric == "counter" {
+	//			value, ok = storageMetric.GetMetricCounter(k)
+	//		} else {
+	//			value, ok = storageMetric.GetMetricGauge(k)
+	//		}
+	//
+	//		if ok {
+	//			handlerclient.SendMetric(client, serveraddr, typeOfMetric, k, value, key)
+	//			counter++
+	//
+	//			handlerclient.SendMetric(client, serveraddr, "counter", "PollCount", strconv.FormatInt(int64(counter), 10), key)
+	//			handlerclient.SendMetric(client, serveraddr, "gauge", "RandomValue", strconv.FormatFloat(rand.Float64(), 'f', -1, 64), key)
+	//		}
+	//		time.Sleep(time.Second * time.Duration(reportInterval))
+	//	}
+	//
+	//	time.Sleep(time.Second * time.Duration(pollInterval))
+	//}
 
 }
