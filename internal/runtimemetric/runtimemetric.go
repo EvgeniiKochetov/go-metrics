@@ -81,9 +81,7 @@ func Run(client *http.Client, serveraddr string, reportInterval, pollInterval in
 	for a := 1; a <= limit; a++ {
 		go SendMetrics(reportInterval, client, serveraddr, key, metrics)
 	}
-	for {
 
-	}
 	//metricmap := metric.GetMapMetrics()
 	//storageMetric := storage.NewMemStorage()
 	//var value string
