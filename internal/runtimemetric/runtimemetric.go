@@ -56,8 +56,7 @@ func GetMetrics(pollInterval int, metrics chan metricData) {
 func SendMetrics(reportInterval int, client *http.Client, serveraddr string, key string, metrics chan metricData) {
 	for {
 
-		var metricdata metricData
-		metricdata = <-metrics
+		metricdata := <-metrics
 		var counter = 0
 		err := handlerclient.SendMetric(client, serveraddr, metricdata.typeOfMetric, metricdata.nameOfMetric, metricdata.value, key)
 		if err != nil {
