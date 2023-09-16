@@ -24,9 +24,14 @@ func GetExtraMetrics(pollInterval int, metrics chan metricData) {
 	for {
 		v, _ := mem.VirtualMemory()
 
-		metrics <- metricData{"gauge", "TotalMemory", string(v.Total)}
-		metrics <- metricData{"gauge", "FreeMemory", string(v.Free)}
-		metrics <- metricData{"gauge", "Used", string(v.Used)}
+		//metrics <- metricData{"gauge", "TotalMemory", string(v.Total)}
+		//metrics <- metricData{"gauge", "FreeMemory", string(v.Free)}
+		//metrics <- metricData{"gauge", "Used", string(v.Used)}
+
+		metrics <- metricData{"gauge", "TotalMemory", fmt.Sprint(v.Total)}
+		metrics <- metricData{"gauge", "FreeMemory", fmt.Sprint(v.Free)}
+		metrics <- metricData{"gauge", "Used", fmt.Sprint(v.Used)}
+
 		time.Sleep(time.Second * time.Duration(pollInterval))
 	}
 }
