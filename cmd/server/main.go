@@ -20,7 +20,7 @@ import (
 var (
 	flagRunAddr         string
 	flagLogLevel        string
-	flagStoreInterval   string
+	storeInterval       string
 	flagFileStoragePath string
 	flagRestore         string
 	flagDatabase        string
@@ -38,7 +38,7 @@ func main() {
 func parseFlags() {
 	flag.StringVar(&flagRunAddr, "a", ":8080", "address and port to run server")
 	flag.StringVar(&flagLogLevel, "l", "info", "log level")
-	flag.StringVar(&flagStoreInterval, "i", "2", "store interval")
+	flag.StringVar(&storeInterval, "i", "2", "store interval")
 	flag.StringVar(&flagFileStoragePath, "f", "metrics-db.json", "storage path")
 	flag.StringVar(&flagRestore, "r", "false", "restore")
 	flag.StringVar(&flagDatabase, "d", "", "configuration of SQL server")
@@ -52,7 +52,7 @@ func parseFlags() {
 		flagLogLevel = envLogLevel
 	}
 	if envStoreInterval := os.Getenv("STORE_INTERVAL"); envStoreInterval != "" {
-		flagStoreInterval = envStoreInterval
+		storeInterval = envStoreInterval
 	}
 	if envStorePath := os.Getenv("FILE_STORAGE_PATH"); envStorePath != "" {
 		flagFileStoragePath = "metrics-db.json"
@@ -101,7 +101,7 @@ func run() error {
 			handler.Memory.LoadStorage("metrics-db.json")
 		}
 	}
-	go filestorage.SaveInFile(flagFileStoragePath, flagStoreInterval)
+	go filestorage.SaveInFile(flagFileStoragePath, storeInterval)
 
 	return http.ListenAndServe(flagRunAddr, r)
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"strconv"
 	"time"
 
 	"github.com/shirou/gopsutil/v3/mem"
@@ -52,15 +53,23 @@ func SendMetrics(reportInterval int, client *http.Client, serveraddr string, key
 
 		var metricdata metricData
 		metricdata = <-metrics
-		//var counter = 0
-		//handlerclient.SendMetric(client, serveraddr, metricdata.typeOfMetric, metricdata.nameOfMetric, metricdata.value, key)
-		//handlerclient.SendMetric(client, serveraddr, "counter", "PollCount", strconv.FormatInt(int64(counter), 10), key)
-		fmt.Println(metricdata)
+		var counter = 0
+		err := handlerclient.SendMetric(client, serveraddr, metricdata.typeOfMetric, metricdata.nameOfMetric, metricdata.value, key)
+		if err != nil {
+			fmt.Println("error when send metric: ", err)
+			return
+		}
+		err = handlerclient.SendMetric(client, serveraddr, "counter", "PollCount", strconv.FormatInt(int64(counter), 10), key)
+		if err != nil {
+			fmt.Println("error when send metric count: ", err)
+			return
+		}
+		//fmt.Println("get metric: ", metricdata)
 		time.Sleep(time.Second * time.Duration(reportInterval))
 	}
 }
 
-func Run(client *http.Client, serveraddr string, reportInterval, pollInterval int, key string, rateLimit int) {
+func Run(client *http.Client, serveraddr string, reportInterval, pollInterval int, key string, rateLimit string) {
 
 	metrics := make(chan metricData, len(metric.GetMapMetrics()))
 
@@ -68,11 +77,13 @@ func Run(client *http.Client, serveraddr string, reportInterval, pollInterval in
 	go GetMetrics(pollInterval, metrics)
 
 	defer close(metrics)
-
-	for a := 1; a <= rateLimit; a++ {
+	limit, _ := strconv.Atoi(rateLimit)
+	for a := 1; a <= limit; a++ {
 		go SendMetrics(reportInterval, client, serveraddr, key, metrics)
 	}
+	for {
 
+	}
 	//metricmap := metric.GetMapMetrics()
 	//storageMetric := storage.NewMemStorage()
 	//var value string
